@@ -16,6 +16,7 @@ while os.path.isfile("%s_s_%d.npy"%(sample, rank)):
     sdata = np.vstack((sdata, \
          np.load("%s_s_%d.npy"%(sample, rank))))
     rank += 1
+print "read %d files in total" % rank
 
 for qR in np.append(
         -np.logspace(np.log10(5.), np.log10(0.1), num=20),
@@ -38,7 +39,7 @@ for qR in np.append(
                 th = sdata[i,1]
                 z = sdata[i,2]*R
                 deltaV = 2* rho*0.1*R * 0.1*R * 2.*np.pi/20 
-                Ks = Kloop.dot(sdata[i,3:6]/R**2)
+                Ks = Kloop.dot(sdata[i,3:6])
                 qr = qloop.dot([rho*np.cos(th), rho*np.sin(th), z])
                 sintegrand += deltaV*(1./Vc*np.linalg.norm(B)*\
                         np.cos(qr)*(np.cos(Ks)-1))

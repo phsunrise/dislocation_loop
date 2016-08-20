@@ -36,7 +36,7 @@ for qR in np.append(
                         continue
                     deltaV = 2* rho*0.1*R * 0.1*R * 2*np.pi/20 
                     Ks = Kloop.dot([sdata[i,3]*np.cos(th), \
-                            sdata[i,3]*np.sin(th), sdata[i,5]])/R**2
+                            sdata[i,3]*np.sin(th), sdata[i,5]])
                     qr = qloop.dot([rho*np.cos(th), rho*np.sin(th), z])
                     sintegrand += deltaV*(1./Vc*np.linalg.norm(B)*\
                             np.cos(qr)*(np.cos(Ks)-1))
