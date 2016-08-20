@@ -44,7 +44,7 @@ for i_r, r in enumerate(np.linspace(0., 5., 51)):
         y = r*np.sin(th)
         if do_save:
             try:
-                data = np.load("%s_s_%d.npy"%(sample, rank))
+                data = np.load("data/%s_s_%d.npy"%(sample, rank))
             except IOError:
                 data = []
 
@@ -85,7 +85,7 @@ for i_r, r in enumerate(np.linspace(0., 5., 51)):
             print r,th,z,s
 
         if do_save:
-            np.save("%s_s_%d.npy"%(sample, rank), data)
+            np.save("data/%s_s_%d.npy"%(sample, rank), data)
 
 #if do_save:
 #    with open("%s_s.csv"%sample, 'wb') as f:
