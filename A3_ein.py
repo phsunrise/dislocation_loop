@@ -32,13 +32,13 @@ for qR in np.append(
             sintegrand = 0.
             aintegrand = 0.
             for i in xrange(len(sdata)):
-                rho = sdata[i,0]
+                rho = sdata[i,0]*R
                 if rho == 0.:
                     continue
                 th = sdata[i,1]
-                z = sdata[i,2]
+                z = sdata[i,2]*R
                 deltaV = 2* rho*0.1*R * 0.1*R * 2.*np.pi/20 
-                Ks = Kloop.dot(sdata[i,3:6])
+                Ks = Kloop.dot(sdata[i,3:6]/R**2)
                 qr = qloop.dot([rho*np.cos(th), rho*np.sin(th), z])
                 sintegrand += deltaV*(1./Vc*np.linalg.norm(B)*\
                         np.cos(qr)*(np.cos(Ks)-1))
