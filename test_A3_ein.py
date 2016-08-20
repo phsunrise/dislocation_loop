@@ -4,6 +4,7 @@ import os
 os.chdir("data")
 
 sample = 'Al'
+os.system("rm %s_A3?_ein.npy"%sample)
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -14,8 +15,8 @@ h = 2.*np.pi/a0*np.array([4.,0.,0.])
 sdata = np.load("%s_s_th0.npy"%sample)
 
 for qR in np.append(
-        np.logspace(np.log10(0.1), np.log10(5), num=20),
-        -np.logspace(np.log10(0.1), np.log10(5), num=20)):
+        -np.logspace(np.log10(5), np.log10(0.1), num=20),
+        np.logspace(np.log10(0.1), np.log10(5), num=20)):
     A3s = []
     A3a = []
     for qth in np.array([np.pi/2.]): 
@@ -28,14 +29,14 @@ for qR in np.append(
             sintegrand = 0.
             aintegrand = 0.
             for i in xrange(len(sdata)):
-                rho = sdata[i,0]
-                z = sdata[i,2]
+                rho = sdata[i,0]*R
+                z = sdata[i,2]*R
                 for th in np.linspace(0., 2*np.pi, 20, endpoint=False):
                     if rho == 0.:
                         continue
                     deltaV = 2* rho*0.1*R * 0.1*R * 2*np.pi/20 
-                    Ks = Kloop.dot(sdata[3]*np.cos(th), \
-                            sdata[3]*np.sin(th), sdata[5])
+                    Ks = Kloop.dot([sdata[i,3]*np.cos(th), \
+                            sdata[i,3]*np.sin(th), sdata[i,5]])/R**2
                     qr = qloop.dot([rho*np.cos(th), rho*np.sin(th), z])
                     sintegrand += deltaV*(1./Vc*np.linalg.norm(B)*\
                             np.cos(qr)*(np.cos(Ks)-1))

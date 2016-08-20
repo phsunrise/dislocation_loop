@@ -87,20 +87,20 @@ f_A2s = interp1d(qR_array, A2s, kind='cubic')
 f_A3a = interp1d(A3a[:,0]*R, A3a[:,3], kind='cubic')
 f_A3s = interp1d(A3s[:,0]*R, A3s[:,3], kind='cubic')
 ax2.plot(qR_array, \
-         (qR_array/R)**4*(f_A1s(qR_array)+
+         (qR_array/R)**2*(f_A1s(qR_array)+
             f_A2a(qR_array)+f_A2s(qR_array)+
             f_A3a(qR_array)+f_A3s(qR_array))**2,
          'b-', label="pos")
 ax2.plot(qR_array, \
-         (qR_array/R)**4*(f_A1s(qR_array)-
+         (qR_array/R)**2*(f_A1s(qR_array)-
             f_A2a(qR_array)+f_A2s(qR_array)+
             f_A3a(-qR_array)+f_A3s(-qR_array))**2,
          'r-', label="neg")
 
-#ax2.set_xscale("log", nonposx='clip')
-#ax2.set_yscale("log", nonposy='clip')
+ax2.set_xscale("log", nonposx='clip')
+ax2.set_yscale("log", nonposy='clip')
 ax2.set_xlim(0.1, 5)
-ax2.set_ylim(1.e1, 10000)
+ax2.set_ylim(1.e1, 1.e5)
 ax2.set_xlabel(r"$qR$")
 ax2.set_ylabel(r"$q^2|A(\vec{K})|^2$ $\mathrm{\AA^{-2}}$")
 ax2.legend(loc='lower left')
