@@ -1,5 +1,5 @@
 import numpy as np
-import csv
+import os, sys
 
 sample = 'Al'
 if sample == 'Al':
@@ -7,9 +7,27 @@ if sample == 'Al':
 elif sample == 'Cu':
     from Cu_parameters import *
 
-sdata = np.load("data/%s_s.npy"%sample)
+sdata = np.load("data/%s_s_0.npy"%sample)
+rank = 1
+while os.path.isfile("data/%s_s_%d.npy"%(sample,rank)):
+    sdata = np.vstack((sdata, 
+                    np.load("data/%s_s_%d.npy"%(sample,rank))))
+    rank += 1
+print "imported %d files" % rank
 
-for qR in np.logspace(np.log10(0.1), np.log10(5), num=20):
+## parallelism
+if len(sys.argv) == 3:
+    nproc = int(sys.argv[1])
+    rank = int(sys.argv[2])
+else:
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    nprocs = comm.Get_size()
+
+for i_qR, qR in enumerate(np.logspace(np.log10(0.1), np.log10(5), 20)):
+    if i_qR % nproc != rank:
+        continue
     A3s = []
     A3a = []
     for qth in np.linspace(0., np.pi/2., 11):
@@ -38,25 +56,24 @@ for qR in np.logspace(np.log10(0.1), np.log10(5), num=20):
             A3a.append([q[0], q[1], q[2], aintegrand])
 
     try:
-        A3s = np.vstack((np.load("data/%s_A3s.npy"%sample), A3s))
-        A3a = np.vstack((np.load("data/%s_A3a.npy"%sample), A3a))
+        A3s = np.vstack((np.load("data/%s_A3s_%d.npy"%(sample,rank)), A3s))
+        A3a = np.vstack((np.load("data/%s_A3a_%d.npy"%(sample,rank)), A3a))
     except IOError:
         A3s = np.array(A3s)
         A3a = np.array(A3a)
-    np.save("data/%s_A3s.npy"%sample, A3s)
-    np.save("data/%s_A3a.npy"%sample, A3a)
+    np.save("data/%s_A3s_%d.npy"%(sample,rank), A3s)
+    np.save("data/%s_A3a_%d.npy"%(sample,rank), A3a)
 
-with open("data/%s_A3s.csv"%sample, 'wb') as f:
-    wr = csv.writer(f, delimiter=' ', \
-                    quoting=csv.QUOTE_NONNUMERIC)
-    A3s = np.load("data/%s_A3s.npy"%sample)
-    for i in xrange(len(A3s)):
-        wr.writerow(list(A3s[i]))
-
-with open("data/%s_A3a.csv"%sample, 'wb') as f:
-    wr = csv.writer(f, delimiter=' ', \
-                    quoting=csv.QUOTE_NONNUMERIC)
-    A3a = np.load("data/%s_A3a.npy"%sample)
-    for i in xrange(len(A3a)):
-        wr.writerow(list(A3a[i]))
-
+#with open("data/%s_A3s.csv"%sample, 'wb') as f:
+#    wr = csv.writer(f, delimiter=' ', \
+#                    quoting=csv.QUOTE_NONNUMERIC)
+#    A3s = np.load("data/%s_A3s.npy"%sample)
+#    for i in xrange(len(A3s)):
+#        wr.writerow(list(A3s[i]))
+#
+#with open("data/%s_A3a.csv"%sample, 'wb') as f:
+#    wr = csv.writer(f, delimiter=' ', \
+#                    quoting=csv.QUOTE_NONNUMERIC)
+#    A3a = np.load("data/%s_A3a.npy"%sample)
+#    for i in xrange(len(A3a)):
+#        wr.writerow(list(A3a[i]))
