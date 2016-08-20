@@ -23,7 +23,7 @@ else:
     from mpi4py import MPI
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
-    nprocs = comm.Get_size()
+    nproc = comm.Get_size()
 
 for i_qR, qR in enumerate(np.logspace(np.log10(0.1), np.log10(5), 20)):
     if i_qR % nproc != rank:
