@@ -44,13 +44,13 @@ while os.path.isfile("data/%s_A3s_%d.npy"%(sample,rank)):
         G = g / (q.dot(q))
         
         A = np.linalg.norm(B)*np.pi*R**2/Vc*\
-                2.*special.jv(1, Q*R)/(Q*R)) # A1s
+                2.*special.jv(1, Q*R)/(Q*R) # A1s
         A += -np.einsum("i,ij,jk,k",h,G,P,q)/Vc*\
-                    2.*special.jv(1, Q*R)/(Q*R)) # A2a
+                    2.*special.jv(1, Q*R)/(Q*R) # A2a
         A += -np.einsum("i,ij,jk,k",h,G,P,q)/Vc*\
-                    2.*special.jv(1, Q*R)/(Q*R)) # A2s
+                    2.*special.jv(1, Q*R)/(Q*R) # A2s
         A += A3s[i,3] + A3a[i,3]
-        I_data.append(q[0], q[1], q[2], A**2)
+        I_data.append([q[0], q[1], q[2], A**2])
 
     print "done rank %d" % rank
     rank += 1
