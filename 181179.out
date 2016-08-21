@@ -1,0 +1,65 @@
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+imported 16 files
+
+------------------------------------------------------------
+Sender: LSF System <lsf@bullet0243>
+Subject: Job 181179: <#BSUB -W 3:00;#BSUB -n 16;#BSUB -e %J.err;#BSUB -o %J.out;#BSUB -R "span[hosts=1]";#BSUB -q medium; mpiexec -np 16 python A3.py> in cluster <slac> Done
+
+Job <#BSUB -W 3:00;#BSUB -n 16;#BSUB -e %J.err;#BSUB -o %J.out;#BSUB -R "span[hosts=1]";#BSUB -q medium; mpiexec -np 16 python A3.py> was submitted from host <rhel6-64k> by user <phsun> in cluster <slac>.
+Job was executed on host(s) <16*bullet0243>, in queue <medium>, as user <phsun> in cluster <slac>.
+</u/xo/phsun> was used as the home directory.
+</u/xo/phsun/dislocation_loop> was used as the working directory.
+Started at Sun Aug 21 02:20:34 2016
+Results reported on Sun Aug 21 03:25:12 2016
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#BSUB -W 3:00
+#BSUB -n 16
+#BSUB -e %J.err
+#BSUB -o %J.out
+#BSUB -R "span[hosts=1]"
+#BSUB -q medium
+
+mpiexec -np 16 python A3.py
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   73120.27 sec.
+    Max Memory :                                 392 MB
+    Average Memory :                             308.28 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Processes :                              22
+    Max Threads :                                23
+    Run time :                                   3878 sec.
+    Turnaround time :                            3878 sec.
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <181179.err> for stderr output of this job.
+
