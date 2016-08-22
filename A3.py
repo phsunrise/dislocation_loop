@@ -1,7 +1,7 @@
 import numpy as np
 import os, sys
 
-sample = 'Cu'
+sample = 'Al'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -44,11 +44,11 @@ for i_qR, qR in enumerate(np.logspace(np.log10(0.1), np.log10(5), 20)):
             sintegrand = 0.
             aintegrand = 0.
             for i in xrange(len(sdata)):
-                rho = sdata[i,0]
+                rho = sdata[i,0]*R
                 if rho == 0.:
                     continue
                 th = sdata[i,1]
-                z = sdata[i,2]
+                z = sdata[i,2]*R
                 deltaV = 2* rho*0.1*R * 0.1*R * 2*np.pi/20 
                 Ks = Kloop.dot(sdata[i,3:6])
                 qr = qloop.dot([rho*np.cos(th), rho*np.sin(th), z])
