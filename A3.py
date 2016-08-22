@@ -1,7 +1,7 @@
 import numpy as np
 import os, sys
 
-sample = 'Al'
+sample = 'Cu'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':

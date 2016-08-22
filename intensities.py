@@ -4,7 +4,7 @@ from scipy import special
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
-sample = 'Al'
+sample = 'Cu'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':

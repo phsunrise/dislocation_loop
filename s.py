@@ -19,7 +19,7 @@ else:
     rank = comm.Get_rank()
     nprocs = comm.Get_size()
 
-sample = 'Al'
+sample = 'Cu'
 do_save = True # check the range before changing this to True!!
 
 if sample == 'Cu':
