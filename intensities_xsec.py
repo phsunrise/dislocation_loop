@@ -13,7 +13,7 @@ elif sample == 'Cu':
 I_data = np.load("data/%s_intensities.npy"%sample)
 I_datax = []
 for i in xrange(len(I_data)):
-    if abs(I_data[i, 1]) < 1.e-6:
+    if abs(I_data[i, 2]) < 1.e-6:
         I_datax.append(I_data[i])
 I_datax = np.array(I_datax)
 
@@ -25,7 +25,7 @@ zi = np.append(
         np.logspace(np.log10(0.1/R), np.log10(5./R), 20))
 xi = np.linspace(-5./R, 5./R, 50)
 zi = np.linspace(-5./R, 5./R, 50)
-Ii = interpolate.griddata((I_datax[:,0], I_datax[:,2]), I_datax[:,3],
+Ii = interpolate.griddata((I_datax[:,0], I_datax[:,1]), I_datax[:,3],
                         (xi[None,:], zi[:,None]), method='linear')
 Ii = np.log10(Ii)
 

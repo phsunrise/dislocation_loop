@@ -23,30 +23,27 @@ for qR in np.append(
         np.logspace(np.log10(0.1), np.log10(5.), num=20)):
     A3s = []
     A3a = []
-    for qth in np.array([np.pi/2.]): 
-        for qphi in np.array([0.]): 
-            q = qR/R*np.array([np.sin(qth)*np.cos(qphi), 
-                    np.sin(qth)*np.sin(qphi), np.cos(qth)])
-            qloop = np.einsum('ij,j', rot, q)
-            K = h+q
-            Kloop = np.einsum('ij,j', rot, K)
-            sintegrand = 0.
-            aintegrand = 0.
-            for i in xrange(len(sdata)):
-                rho = sdata[i,0]*R
-                if rho == 0.:
-                    continue
-                th = sdata[i,1]
-                z = sdata[i,2]*R
-                deltaV = 2* rho*0.1*R * 0.1*R * 2.*np.pi/20 
-                Ks = Kloop.dot(sdata[i,3:6])
-                qr = qloop.dot([rho*np.cos(th), rho*np.sin(th), z])
-                sintegrand += deltaV*(1./Vc*np.linalg.norm(B)*\
-                        np.cos(qr)*(np.cos(Ks)-1))
-                aintegrand += -deltaV*(1./Vc*np.linalg.norm(B)*\
-                        np.sin(qr)*(np.sin(Ks)-Ks))
-            A3s.append([q[0], q[1], q[2], sintegrand])
-            A3a.append([q[0], q[1], q[2], aintegrand])
+    q = qR/R*e
+    qloop = np.einsum('ij,j', rot, q)
+    K = h+q
+    Kloop = np.einsum('ij,j', rot, K)
+    sintegrand = 0.
+    aintegrand = 0.
+    for i in xrange(len(sdata)):
+        rho = sdata[i,0]*R
+        if rho == 0.:
+            continue
+        th = sdata[i,1]
+        z = sdata[i,2]*R
+        deltaV = 2* rho*0.1*R * 0.1*R * 2.*np.pi/20 
+        Ks = Kloop.dot(sdata[i,3:6])
+        qr = qloop.dot([rho*np.cos(th), rho*np.sin(th), z])
+        sintegrand += deltaV*(1./Vc*np.linalg.norm(B)*\
+                np.cos(qr)*(np.cos(Ks)-1))
+        aintegrand += -deltaV*(1./Vc*np.linalg.norm(B)*\
+                np.sin(qr)*(np.sin(Ks)-Ks))
+    A3s.append([qR, sintegrand])
+    A3a.append([qR, aintegrand])
 
     try:
         A3s = np.vstack((np.load("%s_A3s_ein.npy"%sample), A3s))

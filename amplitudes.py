@@ -29,14 +29,15 @@ for i in xrange(3):
           )
 gloop =  np.einsum('ij,kl,jl', rot, rot, g)
 
-qR_array = []
+## get A3s and A3a data, and the qR list
+A3s = np.load("data/%s_A3s_ein.npy"%sample)
+A3a = np.load("data/%s_A3a_ein.npy"%sample)
+qR_list = A3s[:, 0]
+
 A1s = []
 A2a = []
 A2s = []
-A3s = []
-A3a = []
-for qR in np.logspace(np.log10(0.1), np.log10(5.), num=50):
-    qR_array.append(qR)
+for qR in qR_list: 
     q = qR / R * e
     if q.dot(q) <= (q.dot(ez))**2:
         Q = 1.e-6
@@ -49,27 +50,25 @@ for qR in np.logspace(np.log10(0.1), np.log10(5.), num=50):
                     2.*special.jv(1, Q*R)/(Q*R))
     A2s.append(-np.einsum("i,ij,jk,k",q,G,P,q)/Vc*\
                     2.*special.jv(1, Q*R)/(Q*R))
-qR_array = np.array(qR_array)
 A1s = np.array(A1s)
 A2a = np.array(A2a)
 A2s = np.array(A2s)
+I = (A1s+A2a+A2s+A3s[:,1]+A3a[:,1])**2
 
 fig = plt.figure()
 ax1 = fig.add_subplot(1,2,1)
-ax1.plot(qR_array, A1s, 'r--')
-ax1.plot(qR_array, -A1s, 'r-', label='A1s')
-ax1.plot(qR_array, A2a, 'g--')
-ax1.plot(qR_array, -A2a, 'g-', label='A2a')
-ax1.plot(qR_array, A2s, 'b--')
-ax1.plot(qR_array, -A2s, 'b-', label='A2s')
+ax1.plot(qR_list, A1s, 'r--')
+ax1.plot(qR_list, -A1s, 'r-', label='A1s')
+ax1.plot(qR_list, A2a, 'g--')
+ax1.plot(qR_list, -A2a, 'g-', label='A2a')
+ax1.plot(qR_list, A2s, 'b--')
+ax1.plot(qR_list, -A2s, 'b-', label='A2s')
 
-## now get and plot A3 data
-A3s = np.load("data/%s_A3s_ein.npy"%sample)
-A3a = np.load("data/%s_A3a_ein.npy"%sample)
-ax1.plot(A3s[:,0]*R, A3s[:,3], 'c--')
-ax1.plot(A3s[:,0]*R, -A3s[:,3], 'c-', label='A3s')
-ax1.plot(A3a[:,0]*R, A3a[:,3], 'm--')
-ax1.plot(A3a[:,0]*R, -A3a[:,3], 'm-', label='A3a')
+## now plot A3 data
+ax1.plot(qR_list, A3s[:,1], 'c--')
+ax1.plot(qR_list, -A3s[:,1], 'c-', label='A3s')
+ax1.plot(qR_list, A3a[:,1], 'm--')
+ax1.plot(qR_list, -A3a[:,1], 'm-', label='A3a')
 
 ax1.set_xscale("log", nonposx='clip')
 ax1.set_yscale("log", nonposy='clip')
@@ -81,20 +80,9 @@ ax1.legend(loc='upper right')
 
 ## plot intensity
 ax2 = fig.add_subplot(1,2,2)
-f_A1s = interp1d(qR_array, A1s, kind='cubic')
-f_A2a = interp1d(qR_array, A2a, kind='cubic')
-f_A2s = interp1d(qR_array, A2s, kind='cubic')
-f_A3a = interp1d(A3a[:,0]*R, A3a[:,3], kind='cubic')
-f_A3s = interp1d(A3s[:,0]*R, A3s[:,3], kind='cubic')
-ax2.plot(qR_array, \
-         (qR_array/R)**2*(f_A1s(qR_array)+
-            f_A2a(qR_array)+f_A2s(qR_array)+
-            f_A3a(qR_array)+f_A3s(qR_array))**2,
+ax2.plot(qR_list, (qR_list/R)**2*I,\
          'b-', label="pos")
-ax2.plot(qR_array, \
-         (qR_array/R)**2*(f_A1s(qR_array)-
-            f_A2a(qR_array)+f_A2s(qR_array)+
-            f_A3a(-qR_array)+f_A3s(-qR_array))**2,
+ax2.plot(-qR_list, (qR_list/R)**2*I,\
          'r-', label="neg")
 
 ax2.set_xscale("log", nonposx='clip')
