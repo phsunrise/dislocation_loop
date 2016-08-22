@@ -10,14 +10,14 @@ elif sample == 'Cu':
 
 I_data = np.load("data/%s_intensities.npy"%sample)
 xx = np.append(
-        -np.logspace(np.log10(5./R), np.log10(0.1/R), 20),
-        np.logspace(np.log10(0.1/R), np.log10(5./R), 20))
+        -np.logspace(np.log10(2.887/R), np.log10(0.1/R), 20),
+        np.logspace(np.log10(0.1/R), np.log10(2.887/R), 20))
 yy = np.append(
-        -np.logspace(np.log10(5./R), np.log10(0.1/R), 20),
-        np.logspace(np.log10(0.1/R), np.log10(5./R), 20))
+        -np.logspace(np.log10(2.887/R), np.log10(0.1/R), 20),
+        np.logspace(np.log10(0.1/R), np.log10(2.887/R), 20))
 zz = np.append(
-        -np.logspace(np.log10(5./R), np.log10(0.1/R), 20),
-        np.logspace(np.log10(0.1/R), np.log10(5./R), 20))
+        -np.logspace(np.log10(2.887/R), np.log10(0.1/R), 20),
+        np.logspace(np.log10(0.1/R), np.log10(2.887/R), 20))
 grid_x, grid_y, grid_z = np.meshgrid(xx,yy,zz, indexing='ij')
 grid_I = interpolate.griddata(
                 I_data[:,0:3], I_data[:,3],
@@ -27,14 +27,14 @@ I_func = interpolate.RegularGridInterpolator(
                 (xx,yy,zz), grid_I
             )
 
-pts1 = [[x, 0., 0.] for x in xx]
-pts2 = [[0., x, 0.] for x in xx]
-pts3 = [[0., 0., x] for x in xx]
-pts4 = [[0., x/np.sqrt(2.), x/np.sqrt(2.)] for x in xx]
-plt.plot(xx, xx**4*I_func(pts1), label='100') 
-plt.plot(xx, xx**4*I_func(pts2), label='010') 
-plt.plot(xx, xx**4*I_func(pts3), label='001') 
-plt.plot(xx, xx**4*I_func(pts4), label='011') 
+pts1 = [[x, x, x] for x in xx/np.sqrt(3)]
+pts2 = [[x, -x, 0.] for x in xx/np.sqrt(2)]
+pts3 = [[0., x, -x] for x in xx/np.sqrt(2)]
+pts4 = [[-x, 0., x] for x in xx/np.sqrt(2)]
+plt.plot(xx, xx**4*I_func(pts1), label='111') 
+plt.plot(xx, xx**4*I_func(pts2), label='1-10') 
+plt.plot(xx, xx**4*I_func(pts3), label='01-1') 
+plt.plot(xx, xx**4*I_func(pts4), label='-101') 
 
 plt.legend(loc='upper left')
 plt.show()

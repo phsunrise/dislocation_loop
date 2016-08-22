@@ -1,8 +1,8 @@
-#BSUB -W 3:00
-#BSUB -n 11
+#BSUB -W 8:00
+#BSUB -n 16
 #BSUB -e %J.err
 #BSUB -o %J.out
 #BSUB -R "span[hosts=1]"
-#BSUB -q medium
+#BSUB -q long 
 
-mpiexec -np 11 python A3.py
+mpiexec -np 16 python s.py

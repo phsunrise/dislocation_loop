@@ -30,8 +30,12 @@ for i_qR, qR in enumerate(np.logspace(np.log10(0.1), np.log10(5), 20)):
         continue
     A3s = []
     A3a = []
-    for qth in np.linspace(0., np.pi, 21):
-        for qphi in np.linspace(0., 2*np.pi, 20, endpoint=False):
+    for qth in np.linspace(0., np.pi, 41):
+        if qth == 0. or qth == np.pi:
+            qphi_array = [0.]
+        else:
+            qphi_array = np.linspace(0., 2*np.pi, 40, endpoint=False)
+        for qphi in qphi_array: 
             q = qR/R*np.array([np.sin(qth)*np.cos(qphi), 
                     np.sin(qth)*np.sin(qphi), np.cos(qth)])
             qloop = np.einsum('ij,j', rot, q)

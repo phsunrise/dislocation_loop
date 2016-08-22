@@ -36,7 +36,7 @@ for i in xrange(3):
             )
 Ploop =  np.einsum('ij,kl,jl', rot, rot, P)
 
-for i_r, r in enumerate(np.linspace(0., 5., 51)):
+for i_r, r in enumerate(np.linspace(0., 10., 101)):
     if i_r % nprocs != rank:
         continue
     if r == 0.:
@@ -53,7 +53,7 @@ for i_r, r in enumerate(np.linspace(0., 5., 51)):
             except IOError:
                 data = []
 
-        for z in np.linspace(0.1, 10., 100):
+        for z in np.linspace(0.1, 20., 200):
             n = (30 if abs(r)+abs(z)>2. else 60)
                 # used in Chebyshev-Gauss numerical quadrature
             n1 = n # must be even, used in th1 integration
