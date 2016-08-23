@@ -3,7 +3,7 @@ import csv
 import os
 os.chdir("data")
 
-sample = 'Al'
+sample = 'Cu'
 os.system("rm %s_A3?_ein.*" % sample)
 if sample == 'Al':
     from Al_parameters import *

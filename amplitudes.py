@@ -88,7 +88,7 @@ ax2.plot(-qR_list, (qR_list/R)**2*I,\
 ax2.set_xscale("log", nonposx='clip')
 ax2.set_yscale("log", nonposy='clip')
 ax2.set_xlim(0.1, 5)
-ax2.set_ylim(1.e1, 1.e5)
+#ax2.set_ylim(1.e1, 1.e5)
 ax2.set_xlabel(r"$qR$")
 ax2.set_ylabel(r"$q^2|A(\vec{K})|^2$ $\mathrm{\AA^{-2}}$")
 ax2.legend(loc='lower left')
