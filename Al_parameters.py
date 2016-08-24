@@ -1,6 +1,6 @@
 import numpy as np
 
-a0 = 4.050 # Angstrom
+a0 = 4.040 # Angstrom
 R = 10.
 Vc = 16.61
 
@@ -21,6 +21,11 @@ B = a0/3.*np.array([1.,1.,1.])
 C11 = 107.3 # GPa
 C12 = 60.08
 C44 = 28.3
+#given in Ben's email
+C11 = 11.63
+C12 = 6.48
+C44 = 3.09
+
 d = C11 - C12 - 2.*C44
 
 h = 2.*np.pi/a0*np.array([4.,0.,0.])
