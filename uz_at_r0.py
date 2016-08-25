@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os, sys
 
 colors = ['r', 'b']
-datadir = "data/"
+datadir = "/afs/slac.stanford.edu/u/xo/phsun/data1/"
 for i_sample, sample in enumerate(['Al', 'Cu']):
     sdata = np.load(datadir+"%s_s_0.npy"%sample)
     rank = 1
@@ -23,4 +23,5 @@ for i_sample, sample in enumerate(['Al', 'Cu']):
 
 plt.legend()
 plt.gca().invert_yaxis()
-plt.savefig("/Users/phsun/Dropbox/uz_r0.pdf")
+plt.savefig("uz_r0.pdf")
+plt.show()

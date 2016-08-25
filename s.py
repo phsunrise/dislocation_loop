@@ -19,7 +19,7 @@ else:
     rank = comm.Get_rank()
     nprocs = comm.Get_size()
 
-sample = 'Cu'
+sample = 'Al'
 do_save = True # check the range before changing this to True!!
 
 if sample == 'Cu':
@@ -81,7 +81,7 @@ for i_r, r in enumerate(np.linspace(0., 10., 101)):
                     gloop =  np.einsum('ij,kl,jl', rot, rot, g)
                     integrand += (coeff*eloop.dot(np.array([x,y,z]))*\
                         np.einsum('ij,i,jk', Ploop, eloop, gloop))
-            s = -1./(4.*np.pi**2/R**2*n*abs(z))*integrand/np.linalg.norm(B)
+            s = -1./(4.*np.pi**2*R**2*n*abs(z))*integrand/np.linalg.norm(B)
             if do_save:
                 try:
                     data = np.vstack((data, [r,th,z,s[0],s[1],s[2]]))

@@ -1,6 +1,8 @@
-import sys
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+nprocs = comm.Get_size()
 
-with open("test.txt", 'w') as f:
-    f.write(str(len(sys.argv)))
-    f.write('\n')
-    f.write('  '.join(sys.argv))
+print rank, nprocs
+with open("%d.out"%rank, 'w') as f:
+    f.write(str(rank)+' '+str(nprocs)+'\n')
