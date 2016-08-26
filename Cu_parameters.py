@@ -24,5 +24,5 @@ C44 = 0.755
 d = C11 - C12 - 2.*C44
 
 h = 2.*np.pi/a0 * np.array([2.,2.,2.])
-e = np.array([1.,1.,1.])
-e = e / np.linalg.norm(e)
+eq = np.array([1.,1.,1.])
+eq = eq / np.linalg.norm(eq)

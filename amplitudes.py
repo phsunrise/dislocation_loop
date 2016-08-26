@@ -1,9 +1,10 @@
 import numpy as np
+import sys, os
 from scipy import special
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
-sample = 'Al'
+sample = sys.argv[1]
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -19,6 +20,7 @@ for i in xrange(3):
 Ploop =  np.einsum('ij,kl,jl', rot, rot, P)
 
 g = np.zeros((3,3))
+e = eq
 sum1 = sum(e**2/(C44+d*e**2))
 for i in xrange(3):
     for j in xrange(3):
@@ -38,7 +40,7 @@ A1s = []
 A2a = []
 A2s = []
 for qR in qR_list: 
-    q = qR / R * e
+    q = qR / R * eq
     if q.dot(q) <= (q.dot(ez))**2:
         Q = 1.e-6
     else:
@@ -50,6 +52,8 @@ for qR in qR_list:
                     2.*special.jv(1, Q*R)/(Q*R))
     A2s.append(-np.einsum("i,ij,jk,k",q,G,P,q)/Vc*\
                     2.*special.jv(1, Q*R)/(Q*R))
+print A1s
+print A2s
 A1s = np.array(A1s)
 A2a = np.array(A2a)
 A2s = np.array(A2s)
@@ -72,14 +76,13 @@ ax1.plot(qR_list, -A3a[:,1], 'm-', label='A3a')
 
 ax1.set_xscale("log", nonposx='clip')
 ax1.set_yscale("log", nonposy='clip')
-ax1.set_xlim(0.1, 5)
-ax1.set_ylim(1.e1, 1.e5)
+#ax1.set_ylim(1.e1, 1.e5)
 ax1.set_xlabel(r"$qR$")
 ax1.set_ylabel(r"$A(\vec{K})$")
 ax1.legend(loc='upper right')
 
 ## plot intensity
-ax2 = fig.add_subplot(1,2,2)
+ax2 = fig.add_subplot(1,2,2, sharex=ax1)
 ax2.plot(qR_list, (qR_list/R)**2*I,\
          'b-', label="pos")
 ax2.plot(-qR_list, (qR_list/R)**2*I,\
@@ -87,7 +90,7 @@ ax2.plot(-qR_list, (qR_list/R)**2*I,\
 
 ax2.set_xscale("log", nonposx='clip')
 ax2.set_yscale("log", nonposy='clip')
-ax2.set_xlim(0.1, 5)
+ax2.set_xlim(0.1, 5.)
 #ax2.set_ylim(1.e1, 1.e5)
 ax2.set_xlabel(r"$qR$")
 ax2.set_ylabel(r"$q^2|A(\vec{K})|^2$ $\mathrm{\AA^{-2}}$")

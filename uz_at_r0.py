@@ -4,6 +4,7 @@ import os, sys
 
 colors = ['r', 'b']
 datadir = "/afs/slac.stanford.edu/u/xo/phsun/data1/"
+datadir = "data/"
 for i_sample, sample in enumerate(['Al', 'Cu']):
     sdata = np.load(datadir+"%s_s_0.npy"%sample)
     rank = 1

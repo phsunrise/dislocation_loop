@@ -1,9 +1,9 @@
 import numpy as np
 import csv
-import os
+import os, sys
 os.chdir("data")
 
-sample = 'Cu'
+sample = sys.argv[1]
 os.system("rm %s_A3?_ein.*" % sample)
 if sample == 'Al':
     from Al_parameters import *
@@ -19,11 +19,11 @@ while os.path.isfile("%s_s_%d.npy"%(sample, rank)):
 print "read %d files in total" % rank
 
 for qR in np.append(
-        -np.logspace(np.log10(5.), np.log10(0.1), num=20),
-        np.logspace(np.log10(0.1), np.log10(5.), num=20)):
+        -np.logspace(np.log10(5.), np.log10(0.1), num=40),
+        np.logspace(np.log10(0.1), np.log10(5.), num=40)):
     A3s = []
     A3a = []
-    q = qR/R*e
+    q = qR/R*eq
     qloop = np.einsum('ij,j', rot, q)
     K = h+q
     Kloop = np.einsum('ij,j', rot, K)
