@@ -46,9 +46,9 @@ for i_orientation, orientation in enumerate(orientations):
 
         try:
             A3s = np.vstack((np.load("%s_A3s_ein_ori%d.npy"%(\
-                                            sample, i_orientation), A3s))
+                                            sample, i_orientation)), A3s))
             A3a = np.vstack((np.load("%s_A3a_ein_ori%d.npy"%(\
-                                            sample, i_orientation), A3a))
+                                            sample, i_orientation)), A3a))
         except IOError:
             A3s = np.array(A3s)
             A3a = np.array(A3a)
