@@ -52,8 +52,6 @@ for qR in qR_list:
                     2.*special.jv(1, Q*R)/(Q*R))
     A2s.append(-np.einsum("i,ij,jk,k",q,G,P,q)/Vc*\
                     2.*special.jv(1, Q*R)/(Q*R))
-print A1s
-print A2s
 A1s = np.array(A1s)
 A2a = np.array(A2a)
 A2s = np.array(A2s)
