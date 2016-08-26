@@ -21,7 +21,9 @@ print "read %d files in total" % rank
 for i_orientation, orientation in enumerate(orientations):
     h1 = np.einsum('ij,j', orientation, h)
     eq1 = np.einsum('ij,j', orientation, eq)
-    for qR in np.append(np.linspace(-5., -0.1, 50), np.linspace(0.1, 5., 50)):
+    for qR in np.linspace(-5., 5., 51):
+        if qR == 0.:
+            continue
         A3s = []
         A3a = []
         q = qR/R*eq1
