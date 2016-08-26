@@ -24,5 +24,5 @@ for i_sample, sample in enumerate(['Al', 'Cu']):
 
 plt.legend()
 plt.gca().invert_yaxis()
-plt.savefig("uz_r0.pdf")
+plt.savefig("plots/uz_r0.pdf")
 plt.show()

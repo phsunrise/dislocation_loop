@@ -3,6 +3,7 @@ import sys, os
 from scipy import special
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
+from info import *
 
 sample = sys.argv[1]
 if sample == 'Al':
@@ -55,6 +56,7 @@ for qR in qR_list:
 A1s = np.array(A1s)
 A2a = np.array(A2a)
 A2s = np.array(A2s)
+I = (-A1s+A2a-A2s+A3s[:,1]-A3a[:,1])**2
 I = (A1s+A2a+A2s+A3s[:,1]+A3a[:,1])**2
 
 fig = plt.figure()
@@ -72,9 +74,9 @@ ax1.plot(qR_list, -A3s[:,1], 'c-', label='A3s')
 ax1.plot(qR_list, A3a[:,1], 'm--')
 ax1.plot(qR_list, -A3a[:,1], 'm-', label='A3a')
 
-ax1.set_xscale("log", nonposx='clip')
-ax1.set_yscale("log", nonposy='clip')
-#ax1.set_ylim(1.e1, 1.e5)
+ax1.set_xscale("log", nonposx='mask')
+ax1.set_yscale("log", nonposy='mask')
+ax1.set_ylim(1.e1, 1.e5)
 ax1.set_xlabel(r"$qR$")
 ax1.set_ylabel(r"$A(\vec{K})$")
 ax1.legend(loc='upper right')
@@ -86,8 +88,7 @@ ax2.plot(qR_list, (qR_list/R)**2*I,\
 ax2.plot(-qR_list, (qR_list/R)**2*I,\
          'r-', label="neg")
 
-ax2.set_xscale("log", nonposx='clip')
-ax2.set_yscale("log", nonposy='clip')
+ax2.set_yscale("log", nonposy='mask')
 ax2.set_xlim(0.1, 5.)
 #ax2.set_ylim(1.e1, 1.e5)
 ax2.set_xlabel(r"$qR$")
@@ -95,5 +96,17 @@ ax2.set_ylabel(r"$q^2|A(\vec{K})|^2$ $\mathrm{\AA^{-2}}$")
 ax2.legend(loc='lower left')
 
 fig.tight_layout()
-fig.savefig("plots/%s_amplitudes.pdf"%sample)
-plt.show()
+fig.savefig(plot_dir+"%s_amplitudes.pdf"%sample)
+#plt.show()
+plt.close()
+
+## also, plot q^4/R^2*I
+fig = plt.figure(figsize=(12, 8))
+ax = fig.add_subplot(1,1,1)
+ax.plot(qR_list, (qR_list/R)**4/R**2*I, 'bo--')
+ax.set_xlim(-5., 5.)
+ax.grid(True)
+ax.set_xlabel(r"$qR$")
+ax.set_ylabel(r"$q^2|A(\vec{K})|^2$ $\mathrm{\AA^{-2}}$")
+ax.set_title(r"%s, $R$=%d $\AA$"%(sample, R))
+fig.savefig(plot_dir+"%s_q4I.pdf"%sample)

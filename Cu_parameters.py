@@ -26,3 +26,11 @@ d = C11 - C12 - 2.*C44
 h = 2.*np.pi/a0 * np.array([2.,2.,2.])
 eq = np.array([1.,1.,1.])
 eq = eq / np.linalg.norm(eq)
+
+## four possibilities for loop orientations
+## in order to accelerate the calculation, we rotate h and eq,
+## but not ex, ey, ez, so that the s field results can still be used
+orientations = [np.diag([1.,1.,1.]),
+                np.diag([1.,-1.,-1.]),
+                np.diag([-1.,1.,-1.]),
+                np.diag([-1.,-1.,1.])]
