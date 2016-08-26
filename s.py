@@ -4,7 +4,7 @@ To run:
     bsub -W %TIME -o %OUT -e %ERR -q %QUEUE mpiexec -n %NPROC \
         python s_parallel.py 
 The output is several files, each containing a n*6 table; 
-each line is [r/R, th, z/R, sx, sy, sz]
+each line is [r/R, th, z/R, sx/norm(B), sy/norm(B), sz/norm(B)], in loop coordinates
 '''
 import os, sys
 import numpy as np

@@ -36,12 +36,10 @@ for qR in np.append(
         th = sdata[i,1]
         z = sdata[i,2]*R
         deltaV = 2* rho*0.1*R * 0.1*R * 2.*np.pi/20 
-        Ks = Kloop.dot(sdata[i,3:6])
+        Ks = Kloop.dot(sdata[i,3:6]*np.linalg.norm(B))
         qr = qloop.dot([rho*np.cos(th), rho*np.sin(th), z])
-        sintegrand += deltaV*(1./Vc*np.linalg.norm(B)*\
-                np.cos(qr)*(np.cos(Ks)-1))
-        aintegrand += -deltaV*(1./Vc*np.linalg.norm(B)*\
-                np.sin(qr)*(np.sin(Ks)-Ks))
+        sintegrand += deltaV/Vc*np.cos(qr)*(np.cos(Ks)-1)
+        aintegrand += -deltaV/Vc*np.sin(qr)*(np.sin(Ks)-Ks)
     A3s.append([qR, sintegrand])
     A3a.append([qR, aintegrand])
 
