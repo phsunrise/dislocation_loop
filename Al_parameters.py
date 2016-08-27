@@ -32,7 +32,6 @@ h = 2.*np.pi/a0*np.array([4.,0.,0.])
 eq = np.array([1.,0.,0.])
 eq = eq / np.linalg.norm(eq)
 
-orientations = [np.diag([1.,1.,1.]),
-                np.diag([1.,-1.,-1.]),
-                np.diag([-1.,1.,-1.]),
-                np.diag([-1.,-1.,1.])]
+## all four orientations are equivalent for h and q
+## parallel to <100>
+orientations = [np.diag([1.,1.,1.])]
