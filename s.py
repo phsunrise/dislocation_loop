@@ -11,15 +11,15 @@ import numpy as np
 
 NFILES = 1024 # number of files in "preproc"
 
-## if 2 more arguments are provided, use "fake parallelism"
-if len(sys.argv) == 3:
-    nprocs = int(sys.argv[1])
-    rank = int(sys.argv[2])
-else:
-    from mpi4py import MPI
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    nprocs = comm.Get_size()
+### if 2 more arguments are provided, use "fake parallelism"
+#if len(sys.argv) == 3:
+#    nprocs = int(sys.argv[1])
+#    rank = int(sys.argv[2])
+
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+nprocs = comm.Get_size()
 
 sample = 'Al'
 do_save = True # check the range before changing this to True!!
