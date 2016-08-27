@@ -1,8 +1,7 @@
-#BSUB -W 4:00
-#BSUB -n 16 
+#BSUB -W 0:15
+#BSUB -n 1024 
 #BSUB -e %J.err
 #BSUB -o %J.out
-#BSUB -R "span[hosts=1]"
-#BSUB -q medium
+#BSUB -q bulletmpi-large 
 
-mpiexec -np 16 python s.py
+mpiexec -np 1024 python s.py
