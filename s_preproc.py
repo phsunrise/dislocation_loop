@@ -1,7 +1,12 @@
 import numpy as np
 import os
 
-# first remove existing files
+## first check if the preproc folder exists
+if not os.path.isdir("preproc/"):
+    print "Creating folder preproc/"
+    os.system("mkdir preproc")
+
+# remove existing files
 os.system("rm preproc/s_????.npy")
 
 r_array = np.linspace(0., 10., 101)
