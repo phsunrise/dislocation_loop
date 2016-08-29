@@ -30,16 +30,19 @@ yy = np.arange(ymin, ymax, a0/3.)
 zz = np.arange(zmin, zmax, a0/3.)
 x_grid, y_grid, z_grid = np.meshgrid(xx,yy,zz,indexing='ij') 
 
+print "begin interpolation..."
 sx_interp = griddata(sdata_xyz[:,0:3], sdata_xyz[:,3],\
        np.array([x_grid.ravel(), y_grid.ravel(), 
            z_grid.ravel()]).T).reshape((len(xx), len(yy), len(zz)))
+print "sx interpolated"
 sy_interp = griddata(sdata_xyz[:,0:3], sdata_xyz[:,4],\
        np.array([x_grid.ravel(), y_grid.ravel(), 
            z_grid.ravel()]).T).reshape((len(xx), len(yy), len(zz)))
+print "sy interpolated"
 sz_interp = griddata(sdata_xyz[:,0:3], sdata_xyz[:,5],\
        np.array([x_grid.ravel(), y_grid.ravel(), 
            z_grid.ravel()]).T).reshape((len(xx), len(yy), len(zz)))
-
+print "sz interpolated"
 
 np.savez("data/%s_s_interp.npy"%sample, 
         xx=xx, yy=yy, zz=zz,
