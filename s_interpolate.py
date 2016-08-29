@@ -8,11 +8,11 @@ if sample == 'Al':
 elif sample == 'Cu':
     from Cu_parameters import *
 
-sdata = np.load("data/%s_s_0.npy"%sample)
+sdata = np.load("data1/%s_s_0.npy"%sample)
 rank = 1 
-while os.path.isfile("data/%s_s_%d.npy"%(sample, rank)):
+while os.path.isfile("data1/%s_s_%d.npy"%(sample, rank)):
     sdata = np.vstack((sdata, \
-         np.load("data/%s_s_%d.npy"%(sample, rank))))
+         np.load("data1/%s_s_%d.npy"%(sample, rank))))
     rank += 1
 print "read %d files in total" % rank
 
@@ -28,6 +28,9 @@ zmin, zmax = np.min(sdata_xyz[:,2]), np.max(sdata_xyz[:,2])
 xx = np.arange(xmin, xmax, a0/3.)
 yy = np.arange(ymin, ymax, a0/3.)
 zz = np.arange(zmin, zmax, a0/3.)
+xx = np.linspace(xmin, xmax, 2)
+yy = np.linspace(ymin, ymax, 2)
+zz = np.linspace(zmin, zmax, 2)
 x_grid, y_grid, z_grid = np.meshgrid(xx,yy,zz,indexing='ij') 
 
 print "begin interpolation..."
