@@ -49,28 +49,12 @@ orig_A = np.array([0., 0., 1.5])
 orig_B = np.array([1./3, 1./3, 2.5])
 orig_C = np.array([-1./3, 2./3, 0.5])
 
+rhomax = 5.*R
+zmax = 10.*R
 ## the summation goes to rho = 5R in xy plane, and z from -10R to 10R
-
-for qR in np.linspace(-5., 5., 51):
-    if qR == 0:
-        continue
-    q = qR/R * eq
-    qloop = np.einsum('ij,j', rot, q)
-    K = h+q
-    Kloop = np.einsum('ij,j', rot, K)
-
-    amplitude = 0.
-    ## first calculate the laue term
-    '''
-    The dislocation loop is inside the region r <= R, which
-        in p coordinates is x^2+y^2+xy <= (R/a1)^2. The constraint on
-        x is 3/4*x^2 <= (R/a1)^2
-    '''
-    _xlim = np.floor(R / a1 * 2./np.sqrt(3))
-    for x in np.arange(-_xlim, _xlim+1):
-        _ylims = np.roots([1., x, x**2-(R/a1)**2])
-        for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
-            amplitude += np.cos(qloop.dot(x*ex_p+y*ey_p))
-
-
-    print "qR = %f, amplitude = %f" % (qR, amplitude)
+##     (both roughly, since the origins will give some offset)
+for zind in np.arange(np.ceil(-zmax/(3.*a2)), np.floor(zmax/(3.*a2))):
+    _xlim = np.floor(rhomax / a1 * 2./np.sqrt(3))
+    for xind in np.arange(-_xlim, _xlim+1):
+        _ylims = np.roots([1., x, x**2-(rhomax/a1)**2])
+        for yind in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
