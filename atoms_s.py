@@ -18,7 +18,7 @@ elif sample == 'Cu':
 
 # get number of files in "preproc"
 NFILES = 0 
-while os.path.isfile("preproc/%s_atoms_s_%04d.npy"%(sample, NFILES)):
+while os.path.isfile("preproc/%s_atoms_s_pre_%04d.npy"%(sample, NFILES)):
     NFILES += 1
 
 ## P tensor

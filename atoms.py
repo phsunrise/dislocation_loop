@@ -4,23 +4,22 @@ The script is mostly written in loop coordinates
 '''
 import numpy as np
 import sys, os
+import matplotlib.pyplot as plt
 
-#sample = sys.argv[1]
 sample = 'Al'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
     from Cu_parameters import *
 
-P = np.zeros((3, 3))
-for i in xrange(3):
-    for j in xrange(3):
-        P[i,j] = ((C12*F.dot(B) + d*F[i]*B[i]) * \
-                    (1 if i==j else 0) + \
-                    C44*(F[i]*B[j]+F[j]*B[i])
-            )
-Ploop =  np.einsum('ij,kl,jl', rot, rot, P)
-
+## read s data
+sdata = np.load("data/%s_atoms_s_0.npy"%sample)
+i_file = 1
+while os.path.isfile("data/%s_atoms_s_%d.npy"%(sample, i_file)):
+    sdata = np.vstack((sdata, \
+                np.load("data/%s_atoms_s_%d.npy"%(sample, i_file))))
+    i_file += 1
+print "read %d files" % i_file
 
 '''
 In loop coordinates, there should be 3 different planes,
@@ -50,7 +49,7 @@ orig_B = np.array([1./3, 1./3, 2.5])
 orig_C = np.array([-1./3, 2./3, 0.5])
 
 ## the summation goes to rho = 5R in xy plane, and z from -10R to 10R
-
+amplitudes = [] 
 for qR in np.linspace(-5., 5., 51):
     if qR == 0:
         continue
@@ -72,5 +71,17 @@ for qR in np.linspace(-5., 5., 51):
         for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
             amplitude += np.cos(qloop.dot(x*ex_p+y*ey_p))
 
+    for x, y, z, sx, sy, sz in sdata:
+        qr = qloop.dot([x, y, z])
+        Ks = Kloop.dot([sx, sy, sz])
+        amplitude += np.cos(qr)*(np.cos(Ks)-1.)-np.sin(qr)*np.sin(Ks)
 
     print "qR = %f, amplitude = %f" % (qR, amplitude)
+    amplitudes.append([qR, amplitude])
+
+# plot and save data
+amplitudes = np.array(amplitudes)
+plt.plot(amplitudes[:,0], amplitudes[:,1]**2)
+plt.show()
+
+np.save("data/%s_amplitudes.npy"%sample, amplitudes)
