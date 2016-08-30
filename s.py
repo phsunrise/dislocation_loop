@@ -9,12 +9,10 @@ each line is [r/R, th, z/R, sx/norm(B), sy/norm(B), sz/norm(B)], in loop coordin
 import os, sys
 import numpy as np
 
-NFILES = 1024 # number of files in "preproc"
-
-### if 2 more arguments are provided, use "fake parallelism"
-#if len(sys.argv) == 3:
-#    nprocs = int(sys.argv[1])
-#    rank = int(sys.argv[2])
+# get number of files in "preproc"
+NFILES = 0 
+while os.path.isfile("preproc/s_%04d.npy"%NFILES):
+    NFILES += 1
 
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
@@ -82,4 +80,4 @@ for i_file in xrange(NFILES):
             data = [r,th,z,s[0],s[1],s[2]] 
 
     if do_save:
-        np.save("data/%s_s_%d.npy"%(sample, rank), data)
+        np.save("data/%s_s_%d.npy"%(sample, i_file), data)
