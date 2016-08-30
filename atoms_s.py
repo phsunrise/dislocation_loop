@@ -51,16 +51,25 @@ orig_C = np.array([-1./3, 2./3, 0.5])
 
 ## the summation goes to rho = 5R in xy plane, and z from -10R to 10R
 ##     (both roughly, since the origins will give some offset)
-rhomax = 5.*R
-zmax = 10.*R
-for zind in np.arange(np.ceil(-zmax/(3.*a2)), np.floor(zmax/(3.*a2))):
-    if zind == 0.:
-        continue
+rhomax = 1.*R
+zmax = 1.*R
+data = []
+for z_p in 0.5+np.arange(np.ceil(-zmax/a2), np.floor(zmax/a2)):
+    if z_p % 3 == 0.5: 
+        x0, y0 = orig_C[0:2]
+    elif z_p % 3 == 1.5:
+        x0, y0 = orig_A[0:2]
+    elif z_p % 3 == 2.5:
+        x0, y0 = orig_B[0:2]
+
     _xlim = np.floor(rhomax / a1 * 2./np.sqrt(3))
-    for xind in np.arange(-_xlim, _xlim+1):
-        _ylims = np.roots([1., x, x**2-(rhomax/a1)**2])
-        for yind in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
-            x, y, z = (xind*ex_p + yind*ey_p + zind*ez_p)/R
+    for x_p in np.arange(-_xlim, _xlim+1):
+        _ylims = np.roots([1., x_p, x_p**2-(rhomax/a1)**2])
+        for y_p in y0+np.arange(np.ceil(np.min(_ylims)), \
+                                 np.floor(np.max(_ylims))+1):
+            x_p, y_p = x_p+x0, y_p+y0
+            x, y, z = (x_p*ex_p + y_p*ey_p + z_p*ez_p)/R
+                    # needs to be in units of R
 
             n = 30
             n1 = n
@@ -89,4 +98,7 @@ for zind in np.arange(np.ceil(-zmax/(3.*a2)), np.floor(zmax/(3.*a2))):
                     integrand += (coeff*eloop.dot(np.array([x,y,z]))*\
                         np.einsum('ij,i,jk', Ploop, eloop, gloop))
             s = -1./(4.*np.pi**2*R**2*n*abs(z))*integrand
-     
+            data.append([x, y, z, s[0], s[1], s[2]])
+            print "done", x, y, z, s
+
+np.save("test.npy", data)
