@@ -21,38 +21,8 @@ while os.path.isfile("data/%s_atoms_s_%d.npy"%(sample, i_file)):
     i_file += 1
 print "read %d files" % i_file
 
-'''
-In loop coordinates, there should be 3 different planes,
-    each of which is a triangular lattice. The ex_p and ey_p vectors
-    indicate the orientation of the two sides of the triangle
-The lattice orientation is the same for all 3 planes; they only
-    differ by a constant translation
-'''
-## side length of triangle
-a1 = a0*np.sqrt(2)/2.
-## distance between planes
-a2 = a0*np.sqrt(3)/3.
-ex_p_th = np.pi/6.
-ey_p_th = np.pi/2.
-ex_p = a1*(ex*np.cos(ex_p_th)+ey*np.sin(ex_p_th))
-ey_p = a1*(ex*np.cos(ey_p_th)+ey*np.sin(ey_p_th))
-ez_p = a2*ez
-## From now on, the coordinates will be in units of ex_p, ey_p, ez_p
-'''
-Here we assume that the dislocation loop has the configuration of plane A
-In this case, starting from the origin, the planes will be (A), C, A, B, C, A, ... 
-    with z coordinates (0), 0.5, 1.5, 2.5, 3.5, 4.5, ... in units of a2
-The following is the coordinates for one atom on each plane 
-'''
-orig_A = np.array([0., 0., 1.5])
-orig_B = np.array([1./3, 1./3, 2.5])
-orig_C = np.array([-1./3, 2./3, 0.5])
-
-## the summation goes to rho = 5R in xy plane, and z from -10R to 10R
 amplitudes = [] 
 for qR in np.linspace(-5., 5., 51):
-    if qR == 0:
-        continue
     q = qR/R * eq
     qloop = np.einsum('ij,j', rot, q)
     K = h+q

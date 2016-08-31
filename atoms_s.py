@@ -21,16 +21,6 @@ NFILES = 0
 while os.path.isfile("preproc/%s_atoms_s_pre_%04d.npy"%(sample, NFILES)):
     NFILES += 1
 
-## P tensor
-P = np.zeros((3, 3))
-for i in xrange(3):
-    for j in xrange(3):
-        P[i,j] = ((C12*F.dot(B) + d*F[i]*B[i]) * \
-                    (1 if i==j else 0) + \
-                    C44*(F[i]*B[j]+F[j]*B[i])
-            )
-Ploop =  np.einsum('ij,kl,jl', rot, rot, P)
-
 for i_file in xrange(NFILES):
     if i_file % nprocs != rank:
         continue
