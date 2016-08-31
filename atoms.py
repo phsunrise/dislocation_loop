@@ -51,7 +51,7 @@ for qR in np.linspace(-5., 5., 51):
 
 # plot and save data
 amplitudes = np.array(amplitudes)
-plt.plot(amplitudes[:,0], amplitudes[:,1]**2)
+plt.plot(amplitudes[:,0], amplitudes[:,0]**4*amplitudes[:,1]**2)
 plt.show()
 
 np.save("data/%s_amplitudes.npy"%sample, amplitudes)
