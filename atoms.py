@@ -41,6 +41,7 @@ for qR in np.linspace(-5., 5., 51):
         for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
             amplitude += np.cos(qloop.dot(x*ex_p+y*ey_p))
 
+    ## then calculate the 
     for x, y, z, sx, sy, sz in sdata:
         qr = qloop.dot([x, y, z])
         Ks = Kloop.dot([sx, sy, sz])

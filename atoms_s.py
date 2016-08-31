@@ -21,7 +21,8 @@ NFILES = 0
 while os.path.isfile("preproc/%s_atoms_s_pre_%04d.npy"%(sample, NFILES)):
     NFILES += 1
 
-for i_file in xrange(NFILES):
+startfile = 16
+for i_file in range(startfile, NFILES):
     if i_file % nprocs != rank:
         continue
 
