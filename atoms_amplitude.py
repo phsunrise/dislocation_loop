@@ -22,6 +22,7 @@ while os.path.isfile("data/%s_atoms_s_%d.npy"%(sample, i_file)):
 print "read %d files" % i_file
 
 amplitudes = [] 
+amplitudes1 = []  # amplitude inside rho<5R, |z|<10R for comparison
 for qR in np.linspace(-5., 5., 51):
     q = qR/R * eq
     qloop = np.einsum('ij,j', rot, q)
@@ -29,6 +30,7 @@ for qR in np.linspace(-5., 5., 51):
     Kloop = np.einsum('ij,j', rot, K)
 
     amplitude = 0.
+    amplitude1 = 0.
     ## first calculate the laue term
     '''
     The dislocation loop is inside the region r <= R, which
@@ -40,19 +42,29 @@ for qR in np.linspace(-5., 5., 51):
         _ylims = np.roots([1., x, x**2-(R/a1)**2])
         for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
             amplitude += np.cos(qloop.dot(x*ex_p+y*ey_p))
+    amplitude1 = amplitude
 
-    ## then calculate the 
+    ## then calculate the other atoms 
     for x, y, z, sx, sy, sz in sdata:
         qr = qloop.dot([x, y, z])
-        Ks = Kloop.dot([sx, sy, sz])
+        Ks = Kloop.dot([-sx, -sy, -sz]) # for interstitial loops
         amplitude += np.cos(qr)*(np.cos(Ks)-1.)-np.sin(qr)*np.sin(Ks)
+        if np.sqrt(x**2+y**2)<=5.*R and abs(z)<=10.*R:
+            amplitude1 += np.cos(qr)*(np.cos(Ks)-1.)-np.sin(qr)*np.sin(Ks)
 
     print "qR = %f, amplitude = %f" % (qR, amplitude)
     amplitudes.append([qR, amplitude])
+    amplitudes1.append([qR, amplitude1])
 
 # plot and save data
 amplitudes = np.array(amplitudes)
-plt.plot(amplitudes[:,0], amplitudes[:,0]**4*amplitudes[:,1]**2)
+amplitudes1 = np.array(amplitudes1)
+plt.plot(amplitudes[:,0], amplitudes[:,0]**4*amplitudes[:,1]**2,\
+                label='rho<10R, |z|<20R')
+plt.plot(amplitudes1[:,0], amplitudes1[:,0]**4*amplitudes1[:,1]**2,\
+                label='rho<5R, |z|<10R')
+plt.legend()
 plt.show()
 
-np.save("data/%s_amplitudes.npy"%sample, amplitudes)
+np.save("data/%s_atoms_amplitudes.npy"%sample, amplitudes)
+np.save("data/%s_atoms_amplitudes_1.npy"%sample, amplitudes1)
