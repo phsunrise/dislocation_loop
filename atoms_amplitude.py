@@ -19,14 +19,14 @@ i_file = 1
 while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample,\
                             looptype, R, i_file)):
     sdata = np.vstack((sdata, \
-                np.load("data/%s_atoms_s_R%d_%04d.npy"%(sample, \
+                np.load("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample, \
                             looptype, R, i_file))))
     i_file += 1
 print "read %d files" % i_file
 
 amplitudes = [] 
 amplitudes1 = []  # amplitude inside rho<5R, |z|<10R for comparison
-for qR in np.linspace(-5., 5., 51):
+for qR in np.linspace(-5., 5., 21):
     q = qR/R * eq
     qloop = np.einsum('ij,j', rot, q)
     K = h+q
@@ -85,7 +85,7 @@ plt.plot(amplitudes1[:,0], amplitudes1[:,0]**4/R**2*amplitudes1[:,1]**2,\
 plt.legend()
 plt.show()
 
-np.save("data/%s_atoms_%s_R%d_amplitudes.npy"%(\
-                    sample, looptype, R), amplitudes)
-np.save("data/%s_atoms_%s_R%d_amplitudes1.npy"%(\
-                    sample, looptype, R), amplitudes1)
+#np.save("data/%s_atoms_%s_R%d_amplitudes.npy"%(\
+#                    sample, looptype, R), amplitudes)
+#np.save("data/%s_atoms_%s_R%d_amplitudes1.npy"%(\
+#                    sample, looptype, R), amplitudes1)
