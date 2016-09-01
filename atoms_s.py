@@ -10,7 +10,8 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 nprocs = comm.Get_size()
 
-sample = 'Al'
+sample = 'Cu'
+looptype = 'vac'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -18,15 +19,17 @@ elif sample == 'Cu':
 
 # get number of files in "preproc"
 NFILES = 0 
-while os.path.isfile("preproc/%s_atoms_s_pre_%04d.npy"%(sample, NFILES)):
+while os.path.isfile("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
+                        sample, looptype, NFILES)):
     NFILES += 1
 
-startfile = 16
+startfile = 0 
 for i_file in range(startfile, NFILES):
     if i_file % nprocs != rank:
         continue
 
-    xyz_list = np.load("preproc/%s_atoms_s_pre_%04d.npy"%(sample, i_file))
+    xyz_list = np.load("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
+                            sample, looptype, i_file))
     data = []
     for x, y, z in xyz_list:
         n = (30 if x**2+y**2+z**2>4. else 60)
@@ -59,4 +62,4 @@ for i_file in range(startfile, NFILES):
         s = -1./(4.*np.pi**2*R**2*n*abs(z))*integrand
         data.append([x*R, y*R, z*R, s[0], s[1], s[2]])
 
-    np.save("data/%s_atoms_s_%d.npy"%(sample, i_file), data)
+    np.save("data/%s_atoms_s_%s_%04d.npy"%(sample, looptype, i_file), data)
