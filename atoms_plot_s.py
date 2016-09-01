@@ -24,8 +24,8 @@ while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample, looptype, R, i_f
 print "read %d files" % i_file
 
 ## range of data to be shown
-rhocut = 2.*R
-zcuthigh = 2.*R
+rhocut = 1.5*R
+zcuthigh = 1.*R
 zcutlow = -a0
 
 fig = plt.figure()
@@ -68,7 +68,7 @@ if looptype == 'int':
 elif looptype == 'vac':
     ## atoms outside of loop
     loopatoms = []
-    _xlim = np.ceil(rhocut / a1 * 2./np.sqrt(3))
+    _xlim = np.floor(rhocut / a1 * 2./np.sqrt(3))
     for x in np.arange(-_xlim, _xlim+1):
         _ylims = np.roots([1., x, x**2-(rhocut/a1)**2])
         for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
