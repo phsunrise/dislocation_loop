@@ -71,16 +71,16 @@ for qR in np.linspace(-5., 5., 51):
         if np.sqrt(x**2+y**2)<=5.*R and abs(z)<=10.*R:
             amplitude1 += np.cos(qr)*(np.cos(Ks)-1.)-np.sin(qr)*np.sin(Ks)
 
-    print "qR = %f, amplitude = %f" % (qR, amplitude)
-    amplitudes.append([qR, amplitude])
-    amplitudes1.append([qR, amplitude1])
+    print "q = %f, amplitude = %f" % (qR/R, amplitude)
+    amplitudes.append([qR/R, amplitude])
+    amplitudes1.append([qR/R, amplitude1])
 
 # plot and save data
 amplitudes = np.array(amplitudes)
 amplitudes1 = np.array(amplitudes1)
-plt.plot(amplitudes[:,0], amplitudes[:,0]**4*amplitudes[:,1]**2,\
+plt.plot(amplitudes[:,0], amplitudes[:,0]**4/R**2*amplitudes[:,1]**2,\
                 label='rho<10R, |z|<20R')
-plt.plot(amplitudes1[:,0], amplitudes1[:,0]**4*amplitudes1[:,1]**2,\
+plt.plot(amplitudes1[:,0], amplitudes1[:,0]**4/R**2*amplitudes1[:,1]**2,\
                 label='rho<5R, |z|<10R')
 plt.legend()
 plt.show()
