@@ -23,15 +23,20 @@ while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample, looptype, R, i_f
     i_file += 1
 print "read %d files" % i_file
 
+## range of data to be shown
+rhocut = 2.*R
+zcuthigh = 2.*R
+zcutlow = -a0
+
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 sdata_inside1 = [] 
 sdata_inside2 = [] 
 for line in sdata:
-    if np.linalg.norm(line[0:3]) < 2.*R and line[2]>=0.: 
-        sdata_inside1.append(line)
-    elif np.linalg.norm(line[0:3]) < 2.*R and line[2]>=-a0: 
-        sdata_inside2.append(line)
+    if np.linalg.norm(line[0:2])<rhocut and 0.<line[2]<zcuthigh:
+        sdata_inside1.append(line) ## lattice above z=0
+    elif np.linalg.norm(line[0:2])<rhocut and zcutlow<line[2]<0.: 
+        sdata_inside2.append(line) ## lattice below z=0
 
 sdata_inside1 = np.array(sdata_inside1).T
 sdata_inside2 = np.array(sdata_inside2).T
@@ -60,16 +65,19 @@ if looptype == 'int':
         _ylims = np.roots([1., x, x**2-(R/a1)**2])
         for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
             loopatoms.append(x*ex_p+y*ey_p)
-    loopatoms = np.array(loopatoms).T
-    ax.scatter(loopatoms[0], loopatoms[1], 0., c='r')
 elif looptype == 'vac':
-    ### atoms outside of loop
-    #loopatoms = []
-    #_xlim = np.ceil(R / a1 * 2./np.sqrt(3))
-    #for x in np.arange(-_xlim, _xlim+1):
-    #    _ylims = np.roots([1., x, x**2-(R/a1)**2])
-    #    for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
-    #        loopatoms.append(x*ex_p+y*ey_p)
-    pass
+    ## atoms outside of loop
+    loopatoms = []
+    _xlim = np.ceil(rhocut / a1 * 2./np.sqrt(3))
+    for x in np.arange(-_xlim, _xlim+1):
+        _ylims = np.roots([1., x, x**2-(rhocut/a1)**2])
+        for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
+            ''' According to the configuration defined in the parameter file,
+                    the z=0 plane should be type C
+            '''
+            if np.linalg.norm((x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p) > R:
+                loopatoms.append((x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p)
 
+loopatoms = np.array(loopatoms).T
+ax.scatter(loopatoms[0], loopatoms[1], 0., c='r')
 plt.show()
