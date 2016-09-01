@@ -66,7 +66,11 @@ for qR in np.linspace(-5., 5., 21):
     ## then calculate the other atoms 
     for x, y, z, sx, sy, sz in sdata:
         qr = qloop.dot([x, y, z])
-        Ks = Kloop.dot([-sx, -sy, -sz]) # for interstitial loops
+        if looptype == 'vac':
+            Ks = Kloop.dot([sx, sy, sz])
+        elif looptype == 'int':
+            Ks = Kloop.dot([-sx, -sy, -sz])
+
         amplitude += np.cos(qr)*(np.cos(Ks)-1.)-np.sin(qr)*np.sin(Ks)
         if np.sqrt(x**2+y**2)<=5.*R and abs(z)<=10.*R:
             amplitude1 += np.cos(qr)*(np.cos(Ks)-1.)-np.sin(qr)*np.sin(Ks)
