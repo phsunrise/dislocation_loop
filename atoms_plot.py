@@ -50,10 +50,16 @@ for looptype in looptypes:
     intensities /= len(orientations)
     intensities1 /= len(orientations)
 
-    ax.plot(amps[:,0], amps[:,0]**4/R**2*intensities, label='%s,larger'%looptype)
-    ax.plot(amps1[:,0], amps1[:,0]**4/R**2*intensities1, label='%s,smaller'%looptype)
+    if looptype == 'vac':
+        linestype = '--'
+    elif looptype == 'int':
+        linestype = '-'
+    ax.plot(amps[:,0], amps[:,0]**4/R**2*intensities, label='%s,larger'%looptype,\
+            ls=linestype, color='r')
+    ax.plot(amps1[:,0], amps1[:,0]**4/R**2*intensities1, label='%s,smaller'%looptype,\
+            ls=linestype, color='b')
 
-ax.set_yscale("log", nonposy='mask')
+#ax.set_yscale("log", nonposy='mask')
 
-plt.legend(loc='lower left')
+plt.legend(loc='upper left')
 plt.show()
