@@ -5,13 +5,12 @@ The script is mostly written in loop coordinates
 import numpy as np
 import sys, os
 import matplotlib.pyplot as plt
+from info import *
 
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 nprocs = comm.Get_size()
-
-NFILE_max = 600
 
 sample = 'Cu'
 looptypes = ['int', 'vac']
