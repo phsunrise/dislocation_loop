@@ -11,7 +11,7 @@ rank = comm.Get_rank()
 nprocs = comm.Get_size()
 
 sample = 'Cu'
-looptype = 'vac'
+looptype = 'int'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -23,7 +23,7 @@ while os.path.isfile("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
                         sample, looptype, NFILES)):
     NFILES += 1
 
-startfile = 0 
+startfile = 64 
 for i_file in range(startfile, NFILES):
     if i_file % nprocs != rank:
         continue
@@ -62,4 +62,4 @@ for i_file in range(startfile, NFILES):
         s = -1./(4.*np.pi**2*R**2*n*abs(z))*integrand
         data.append([x*R, y*R, z*R, s[0], s[1], s[2]])
 
-    np.save("data/%s_atoms_s_%s_%04d.npy"%(sample, looptype, i_file), data)
+    np.save("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample, looptype, R, i_file), data)
