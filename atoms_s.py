@@ -23,9 +23,17 @@ while os.path.isfile("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
                         sample, looptype, NFILES)):
     NFILES += 1
 
-startfile = 64 
-for i_file in range(startfile, NFILES):
-    if i_file % nprocs != rank:
+# get uncalculated files
+filelist = []
+for i_file in xrange(NFILES):
+    if not os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
+        sample, looptype, R, i_file)):
+        filelist.append(i_file)
+#print filelist
+#sys.exit(0)
+
+for i_i_file, i_file in enumerate(filelist):
+    if i_i_file % nprocs != rank:
         continue
 
     xyz_list = np.load("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
