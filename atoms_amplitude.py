@@ -26,16 +26,17 @@ if __name__ == '__main__':
 
     _list = [(looptype, i_ori, ori) for looptype in looptypes for i_ori, ori in enumerate(orientations)]
     for looptype, i_ori, ori in _list:
+        print "Processing looptype %s, orientation %d" % (looptype, i_ori)
         # first get list of unprocessed data
         filelist = []
-        for i_file in xrange(NFILE_max):
+        for i_file in xrange(NFILES_max):
             if os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
                   sample, looptype, R, i_file)) and not os.path.isfile(\
                   "data/%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\
                     sample, looptype, R, i_ori, i_file)):
                 filelist.append(i_file)
-        #print filelist
-        #sys.exit(0)
+        print filelist
+        continue
 
         for i_i_file, i_file in enumerate(filelist):
             ## here is the parallelism criterion
