@@ -25,19 +25,21 @@ if __name__ == '__main__':
     nprocs = comm.Get_size()
 
     _list = [(looptype, i_ori, ori) for looptype in looptypes for i_ori, ori in enumerate(orientations)]
+    filelists = []
     for looptype, i_ori, ori in _list:
-        print "Processing looptype %s, orientation %d" % (looptype, i_ori)
         # first get list of unprocessed data
-        filelist = []
+        filelists.append([])
         for i_file in xrange(NFILES_max):
             if os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
                   sample, looptype, R, i_file)) and not os.path.isfile(\
                   "data/%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\
                     sample, looptype, R, i_ori, i_file)):
-                filelist.append(i_file)
-        print filelist
-        continue
+                filelists[-1].append(i_file)
+    #print filelists
+    #sys.exit(0)
 
+    for (looptype, i_ori, ori), filelist in zip(_list, filelists):
+        print "Processing looptype %s, orientation %d" % (looptype, i_ori)
         for i_i_file, i_file in enumerate(filelist):
             ## here is the parallelism criterion
             if i_i_file % nprocs != rank:
