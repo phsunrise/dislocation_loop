@@ -19,14 +19,14 @@ if not os.path.isdir("preproc/"):
 
 ## get existing files
 try:
-    xyz_list_orig = np.load("preproc/%s_atoms_s_%s_R%d_pre_0000.npy"%(\
-                                sample, looptype, R))
+    xyz_list_orig = np.load("preproc/%s_atoms_s_%s_pre_0000.npy"%(\
+                                sample, looptype))
     i_file = 1
-    while os.path.isfile("preproc/%s_atoms_s_%s_R%d_pre_%04d.npy"%(\
-                                sample, looptype, R, i_file)):
+    while os.path.isfile("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
+                                sample, looptype, i_file)):
         xyz_list_orig = np.vstack((xyz_list_orig, \
-                  np.load("preproc/%s_atoms_s_%s_R%d_pre_%04d.npy"%(\
-                                sample, looptype, R, i_file))))
+                  np.load("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
+                                sample, looptype, i_file))))
         i_file += 1
     nfiles = i_file
 except IOError:
@@ -70,7 +70,7 @@ nproc = int(nproc)
 
 sublistlen = int(np.ceil(len(xyz_list)*1./nproc))
 for i in xrange(nproc):
-    np.save("preproc/%s_atoms_s_%s_R%d_pre_%04d.npy"%(\
-        sample, looptype, R%d, i+nfiles), \
+    np.save("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
+        sample, looptype, i+nfiles), \
         np.array(xyz_list[i*sublistlen:(i+1)*sublistlen]))
     print "file %d saved"%i
