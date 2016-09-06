@@ -1,5 +1,7 @@
 import numpy as np
 
+crystaltype = 'FCC'
+
 a0 = 4.040 # Angstrom
 R = 10.
 Vc = 16.61
@@ -64,7 +66,7 @@ ey_p = a1*np.array([np.cos(ey_p_th), np.sin(ey_p_th), 0.])
 ez_p = a2*np.array([0., 0., 1.])
 ## From now on, the coordinates will be in units of ex_p, ey_p, ez_p
 '''
-Here we assume that the dislocation loop has the configuration of plane A
+Here we assume that the interstitial loop has the configuration of plane A
 In this case, starting from the origin, the planes will be (A), C, A, B, C, A, ... 
     with z coordinates (0), 0.5, 1.5, 2.5, 3.5, 4.5, ... in units of a2
 The following is the coordinates for one atom on each plane 

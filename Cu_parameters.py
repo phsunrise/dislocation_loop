@@ -1,5 +1,7 @@
 import numpy as np
 
+crystaltype = 'FCC'
+
 a0 = 3.6147 # Angstrom
 R = 10.
 Vc = 11.82
