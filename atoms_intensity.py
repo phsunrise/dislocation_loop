@@ -54,27 +54,27 @@ for looptype in looptypes:
             amplitudes.append([qR/R, amplitude])
 
         amplitudes = np.array(amplitudes)
-        amplitudes1 = amplitudes  # amplitude inside rho<5R, |z|<10R for comparison
-        amplitudes2 = amplitudes  # amplitude inside rho<10R, |z|<20R for comparison
+        amplitudes1 = np.copy(amplitudes)  # amplitude inside rho<5R, |z|<10R for comparison
+        amplitudes2 = np.copy(amplitudes)  # amplitude inside rho<10R, |z|<20R for comparison
 
         i_file = 0 
         while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample,\
                                     looptype, R, i_file)):
             try:
                 amplitudes[:,1] += np.load("data/%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\
-                                    sample, looptype, R, i_ori, i_file))
+                                    sample, looptype, R, i_ori, i_file))[:,1]
                 amplitudes1[:,1] += np.load("data/%s_atoms_amplitude1_%s_R%d_ori%d_%04d.npy"%(\
-                                    sample, looptype, R, i_ori, i_file))
+                                    sample, looptype, R, i_ori, i_file))[:,1]
                 amplitudes2[:,1] += np.load("data/%s_atoms_amplitude2_%s_R%d_ori%d_%04d.npy"%(\
-                                    sample, looptype, R, i_ori, i_file))
+                                    sample, looptype, R, i_ori, i_file))[:,1]
                 i_file += 1
             except IOError:
                 print "file data/%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy does not exist!"%(\
                                     sample, looptype, R, i_ori, i_file)
                 sys.exit(0)
-        intenties.append(amplitudes[:,1]**2)
-        intenties1.append(amplitudes1[:,1]**2)
-        intenties2.append(amplitudes2[:,1]**2)
+        intensities.append(amplitudes[:,1]**2)
+        intensities1.append(amplitudes1[:,1]**2)
+        intensities2.append(amplitudes2[:,1]**2)
         print "read %d files, done orientation %d" % (i_file, i_ori)
 
     # average over all orientations
@@ -87,8 +87,8 @@ for looptype in looptypes:
         linestyle = '--'
     elif looptype == 'int':
         linestyle = '-'
-    ax.plot(intensities*(qR_array/R)**4/R**2, color='r', ls=linestyle)
-    ax.plot(intensities1*(qR_array/R)**4/R**2, color='b', ls=linestyle)
-    ax.plot(intensities2*(qR_array/R)**4/R**2, color='g', ls=linestyle)
+    ax.plot(qR_array, intensities*(qR_array/R)**4/R**2, color='r', ls=linestyle)
+    ax.plot(qR_array, intensities1*(qR_array/R)**4/R**2, color='b', ls=linestyle)
+    ax.plot(qR_array, intensities2*(qR_array/R)**4/R**2, color='g', ls=linestyle)
 
 plt.show()
