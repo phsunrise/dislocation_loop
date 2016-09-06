@@ -6,7 +6,7 @@ import numpy as np
 import os, sys
 
 sample = sys.argv[1] 
-looptype = 'int'
+looptype = 'vac'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -19,14 +19,14 @@ if not os.path.isdir("preproc/"):
 
 ## get existing files
 try:
-    xyz_list_orig = np.load("preproc/%s_atoms_s_%s_pre_0000.npy"%(\
-                                sample, looptype))
+    xyz_list_orig = np.load("preproc/%s_atoms_s_%s_R%d_pre_0000.npy"%(\
+                                sample, looptype, R))
     i_file = 1
-    while os.path.isfile("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
-                                sample, looptype, i_file)):
+    while os.path.isfile("preproc/%s_atoms_s_%s_R%d_pre_%04d.npy"%(\
+                                sample, looptype, R, i_file)):
         xyz_list_orig = np.vstack((xyz_list_orig, \
-                  np.load("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
-                                sample, looptype, i_file))))
+                  np.load("preproc/%s_atoms_s_%s_R%d_pre_%04d.npy"%(\
+                                sample, looptype, R, i_file))))
         i_file += 1
     nfiles = i_file
 except IOError:
@@ -35,8 +35,8 @@ except IOError:
 
 ## the summation goes to rhomax in xy plane, and z from -zmax to zmax 
 ##     (both roughly, since the origins will give some offset)
-rhomax = 10.*R
-zmax = 20.*R
+rhomax = 300.
+zmax = 300.
 
 xyz_list = []
 for z_p in np.arange(np.ceil(-zmax/a2), np.floor(zmax/a2)+1):
@@ -70,6 +70,7 @@ nproc = int(nproc)
 
 sublistlen = int(np.ceil(len(xyz_list)*1./nproc))
 for i in xrange(nproc):
-    np.save("preproc/%s_atoms_s_%s_pre_%04d.npy"%(sample, looptype, i+nfiles), \
+    np.save("preproc/%s_atoms_s_%s_R%d_pre_%04d.npy"%(\
+        sample, looptype, R%d, i+nfiles), \
         np.array(xyz_list[i*sublistlen:(i+1)*sublistlen]))
     print "file %d saved"%i
