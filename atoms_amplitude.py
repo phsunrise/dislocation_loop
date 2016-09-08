@@ -7,14 +7,16 @@ import sys, os
 import matplotlib.pyplot as plt
 from info import *
 
-qR_array = np.linspace(-5., 5., 101)
-
 sample = 'Cu'
 looptypes = ['int', 'vac']
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
     from Cu_parameters import *
+elif sample == 'W':
+    from W_parameters import *
+
+qR_array = R*np.linspace(-0.5, 0.5, 101)
 
 D = 4.0*R ## parameter in gaussian used to smooth out the boundary
 
@@ -64,28 +66,6 @@ if __name__ == '__main__':
                 no laue term calculation in this script; this is taken care of 
                 in the intensity script
                 '''
-                ### first calculate the laue term
-                #'''
-                #The dislocation loop is inside the region r <= R, which
-                #    in p coordinates is x^2+y^2+xy <= (R/a1)^2. The constraint on
-                #    x is 3/4*x^2 <= (R/a1)^2
-                #'''
-                #_xlim = np.floor(R / a1 * 2./np.sqrt(3))
-                #for x in np.arange(-_xlim, _xlim+1):
-                #    _ylims = np.roots([1., x, x**2-(R/a1)**2])
-                #    for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
-                #        if looptype == 'int':
-                #            r = x*ex_p+y*ey_p
-                #            amplitude += np.exp(-0.5*r.dot(r)/D**2)*np.cos(qloop.dot(r))
-                #        elif looptype == 'vac':
-                #            ''' According to the configuration defined in the 
-                #                    parameter file, the z=0 plane should be type C
-                #            '''
-                #            r = (x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p
-                #            amplitude -= np.exp(-0.5*r.dot(r)/D**2)*np.cos(qloop.dot(r))
-                #amplitude1 = amplitude
-
-                ## then calculate the other atoms 
                 for x, y, z, sx, sy, sz in sdata:
                     r = np.array([x,y,z])
                     qr = qloop.dot(r)
@@ -97,9 +77,9 @@ if __name__ == '__main__':
                     _temp = (np.cos(qr)*(np.cos(Ks)-1.)-\
                              np.sin(qr)*np.sin(Ks))*np.exp(-0.5*r.dot(r)/D**2)
                     amplitude += _temp
-                    if np.sqrt(x**2+y**2)<=5.*R and abs(z)<=10.*R:
+                    if np.sqrt(x**2+y**2)<=50. and abs(z)<=100.:
                         amplitude1 += _temp
-                    if np.sqrt(x**2+y**2)<=10.*R and abs(z)<=20.*R:
+                    if np.sqrt(x**2+y**2)<=100. and abs(z)<=200.:
                         amplitude2 += _temp
 
                 amplitudes.append([qR/R, amplitude])
