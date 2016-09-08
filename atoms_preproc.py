@@ -11,6 +11,8 @@ if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
     from Cu_parameters import *
+elif sample == 'W':
+    from W_parameters import *
 
 ## first check if the preproc folder exists
 if not os.path.isdir("preproc/"):
@@ -42,12 +44,18 @@ xyz_list = []
 for z_p in np.arange(np.ceil(-zmax/a2), np.floor(zmax/a2)+1):
     if looptype == 'vac' and z_p == 0.:
         continue
-    if z_p % 3 == 0.: 
-        x0, y0 = orig_C[0:2]
-    elif z_p % 3 == 1.:
-        x0, y0 = orig_A[0:2]
-    elif z_p % 3 == 2.:
-        x0, y0 = orig_B[0:2]
+    if crystaltype == 'FCC':
+        if z_p % 3 == 0.: 
+            x0, y0 = orig_C[0:2]
+        elif z_p % 3 == 1.:
+            x0, y0 = orig_A[0:2]
+        elif z_p % 3 == 2.:
+            x0, y0 = orig_B[0:2]
+    elif crystaltype == 'BCC':
+        if z_p % 2 == 0.:
+            x0, y0 = orig_A[0:2]
+        elif z_p % 2 == 1.:
+            x0, y0 = orig_B[0:2]
 
     _xlim = np.floor(rhomax / a1 * 2./np.sqrt(3))
     for x_p in np.arange(-_xlim, _xlim+1):
