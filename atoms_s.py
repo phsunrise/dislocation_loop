@@ -11,7 +11,7 @@ rank = comm.Get_rank()
 nprocs = comm.Get_size()
 
 sample = 'Cu'
-looptype = 'int'
+looptype = 'vac'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
