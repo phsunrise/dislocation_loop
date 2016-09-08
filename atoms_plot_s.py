@@ -6,22 +6,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-sample = 'Cu'
+sample = 'W'
 looptype = 'vac'
 
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
     from Cu_parameters import *
-
-## read s data
-sdata = np.load("data/%s_atoms_s_%s_R%d_0000.npy"%(sample, looptype, R))
-i_file = 1
-while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample, looptype, R, i_file)):
-    sdata = np.vstack((sdata, \
-                np.load("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample, looptype, R, i_file))))
-    i_file += 1
-print "read %d files" % i_file
+elif sample == 'W':
+    from W_parameters import *
 
 ## range of data to be shown
 rhocut = 1.5*R
@@ -32,11 +25,18 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 sdata_inside1 = [] 
 sdata_inside2 = [] 
-for line in sdata:
-    if np.linalg.norm(line[0:2])<rhocut and 0.<line[2]<zcuthigh:
-        sdata_inside1.append(line) ## lattice above z=0
-    elif np.linalg.norm(line[0:2])<rhocut and zcutlow<line[2]<0.: 
-        sdata_inside2.append(line) ## lattice below z=0
+i_file = 0 
+while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
+        sample, looptype, R, i_file)):
+    sdata = np.load("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
+            sample, looptype, R, i_file))
+    for line in sdata:
+        if np.linalg.norm(line[0:2])<rhocut and 0.<line[2]<zcuthigh:
+            sdata_inside1.append(line) ## lattice above z=0
+        elif np.linalg.norm(line[0:2])<rhocut and zcutlow<line[2]<0.: 
+            sdata_inside2.append(line) ## lattice below z=0
+    print "processed file %d" % i_file
+    i_file += 1
 
 sdata_inside1 = np.array(sdata_inside1).T
 sdata_inside2 = np.array(sdata_inside2).T
