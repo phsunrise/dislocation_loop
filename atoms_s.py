@@ -16,6 +16,8 @@ if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
     from Cu_parameters import *
+elif sample == 'W':
+    from W_parameters import *
 
 # get number of files in "preproc"
 NFILES = 0 
@@ -27,7 +29,7 @@ while os.path.isfile("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
 filelist = []
 for i_file in xrange(NFILES):
     if not os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
-        sample, looptype, R, i_file)):
+          sample, looptype, R, i_file)):
         filelist.append(i_file)
 #print filelist
 #sys.exit(0)
