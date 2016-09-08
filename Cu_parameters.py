@@ -3,7 +3,7 @@ import numpy as np
 crystaltype = 'FCC'
 
 a0 = 3.6147 # Angstrom
-R = 10.
+R = 20.
 Vc = 11.82
 
 ex = np.array([1.,1.,-2.])
