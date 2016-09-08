@@ -8,10 +8,9 @@ import matplotlib.pyplot as plt
 from info import *
 from atoms_amplitude import *
 
-from mpi4py import MPI
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-nprocs = comm.Get_size()
+print "sample:", sample
+print "R=%.1f, D=%.1f*R" (R, D/R)
+datadir = '%s_R%d_D_%.1fR/'%(sample, R, D/R)
 
 fig = plt.figure(figsize=(12,6))
 ax = fig.add_subplot(1, 1, 1)
@@ -58,18 +57,18 @@ for looptype in looptypes:
         amplitudes2 = np.copy(amplitudes)  # amplitude inside rho<10R, |z|<20R for comparison
 
         i_file = 0 
-        while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample,\
+        while os.path.isfile(datadir+"%s_atoms_s_%s_R%d_%04d.npy"%(sample,\
                                     looptype, R, i_file)):
             try:
-                amplitudes[:,1] += np.load("data/%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\
+                amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\
                                     sample, looptype, R, i_ori, i_file))[:,1]
-                amplitudes1[:,1] += np.load("data/%s_atoms_amplitude1_%s_R%d_ori%d_%04d.npy"%(\
+                amplitudes1[:,1] += np.load(datadir+"%s_atoms_amplitude1_%s_R%d_ori%d_%04d.npy"%(\
                                     sample, looptype, R, i_ori, i_file))[:,1]
-                amplitudes2[:,1] += np.load("data/%s_atoms_amplitude2_%s_R%d_ori%d_%04d.npy"%(\
+                amplitudes2[:,1] += np.load(datadir+"%s_atoms_amplitude2_%s_R%d_ori%d_%04d.npy"%(\
                                     sample, looptype, R, i_ori, i_file))[:,1]
                 i_file += 1
             except IOError:
-                print "file data/%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy does not exist!"%(\
+                print "file %s_atoms_amplitude_%s_R%d_ori%d_%04d.npy does not exist!"%(\
                                     sample, looptype, R, i_ori, i_file)
                 sys.exit(0)
         intensities.append(amplitudes[:,1]**2)
