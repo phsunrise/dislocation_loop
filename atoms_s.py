@@ -4,14 +4,17 @@ The script is mostly written in loop coordinates
 '''
 import numpy as np
 import sys, os
+from getopt import getopt
 
-from mpi4py import MPI
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-nprocs = comm.Get_size()
+do_debug = False
+
+opts, args = getopt(sys.argv[1:], "d")
+for o, a in opts:
+    if o == '-d':
+        do_debug = True
 
 sample = 'Cu'
-looptype = 'vac'
+looptype = 'int'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -31,9 +34,15 @@ for i_file in xrange(NFILES):
     if not os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
           sample, looptype, R, i_file)):
         filelist.append(i_file)
-#print filelist
-#sys.exit(0)
+if do_debug:
+    print filelist
+    print "%d files" % len(filelist)
+    sys.exit(0)
 
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+nprocs = comm.Get_size()
 for i_i_file, i_file in enumerate(filelist):
     if i_i_file % nprocs != rank:
         continue
