@@ -9,7 +9,7 @@ from info import *
 from atoms_amplitude import *
 
 print "sample:", sample
-print "R=%.1f, D=%.1f*R" (R, D/R)
+print "R=%.1f, D=%.1f*R"%(R, D/R)
 datadir = '%s_R%d_D_%.1fR/'%(sample, R, D/R)
 
 fig = plt.figure(figsize=(12,6))
@@ -57,20 +57,16 @@ for looptype in looptypes:
         amplitudes2 = np.copy(amplitudes)  # amplitude inside rho<10R, |z|<20R for comparison
 
         i_file = 0 
-        while os.path.isfile(datadir+"%s_atoms_s_%s_R%d_%04d.npy"%(sample,\
-                                    looptype, R, i_file)):
-            try:
-                amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\
-                                    sample, looptype, R, i_ori, i_file))[:,1]
-                amplitudes1[:,1] += np.load(datadir+"%s_atoms_amplitude1_%s_R%d_ori%d_%04d.npy"%(\
-                                    sample, looptype, R, i_ori, i_file))[:,1]
-                amplitudes2[:,1] += np.load(datadir+"%s_atoms_amplitude2_%s_R%d_ori%d_%04d.npy"%(\
-                                    sample, looptype, R, i_ori, i_file))[:,1]
-                i_file += 1
-            except IOError:
-                print "file %s_atoms_amplitude_%s_R%d_ori%d_%04d.npy does not exist!"%(\
-                                    sample, looptype, R, i_ori, i_file)
-                sys.exit(0)
+        while os.path.isfile(datadir+"%s_atoms_amplitude_%s_R%d_ori0_%04d.npy"%(\
+            sample, looptype, R, i_file)):
+            amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\
+                                sample, looptype, R, i_ori, i_file))[:,1]
+            amplitudes1[:,1] += np.load(datadir+"%s_atoms_amplitude1_%s_R%d_ori%d_%04d.npy"%(\
+                                sample, looptype, R, i_ori, i_file))[:,1]
+            amplitudes2[:,1] += np.load(datadir+"%s_atoms_amplitude2_%s_R%d_ori%d_%04d.npy"%(\
+                                sample, looptype, R, i_ori, i_file))[:,1]
+            i_file += 1
+
         intensities.append(amplitudes[:,1]**2)
         intensities1.append(amplitudes1[:,1]**2)
         intensities2.append(amplitudes2[:,1]**2)
@@ -86,8 +82,9 @@ for looptype in looptypes:
         linestyle = '--'
     elif looptype == 'int':
         linestyle = '-'
-    ax.plot(qR_array, intensities*(qR_array/R)**4/R**2, color='r', ls=linestyle)
-    ax.plot(qR_array, intensities1*(qR_array/R)**4/R**2, color='b', ls=linestyle)
-    ax.plot(qR_array, intensities2*(qR_array/R)**4/R**2, color='g', ls=linestyle)
+    ax.plot(qR_array/R, intensities*(qR_array/R)**4/R**2, color='r', ls=linestyle)
+    ax.plot(qR_array/R, intensities1*(qR_array/R)**4/R**2, color='b', ls=linestyle)
+    ax.plot(qR_array/R, intensities2*(qR_array/R)**4/R**2, color='g', ls=linestyle)
 
+ax.set_ylim(0., 10.)
 plt.show()
