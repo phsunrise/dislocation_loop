@@ -1,3 +1,3 @@
 plot_dir = "/Users/phsun/theory/plots/"
 
-NFILES_max = 600
+NFILES_max = 10000000

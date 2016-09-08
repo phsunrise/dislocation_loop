@@ -21,10 +21,13 @@ qR_array = R*np.linspace(-0.5, 0.5, 101)
 D = 4.0*R ## parameter in gaussian used to smooth out the boundary
 
 if __name__ == '__main__':
-    from mpi4py import MPI
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    nprocs = comm.Get_size()
+    from getopt import getopt
+    do_debug = False
+
+    opts, args = getopt(sys.argv[1:], "d")
+    for o, a in opts:
+        if o == '-d':
+            do_debug = True
 
     _list = [(looptype, i_ori, ori) for looptype in looptypes for i_ori, ori in enumerate(orientations)]
     filelists = []
@@ -32,13 +35,21 @@ if __name__ == '__main__':
         # first get list of unprocessed data
         filelists.append([])
         for i_file in xrange(NFILES_max):
-            if os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
-                  sample, looptype, R, i_file)) and not os.path.isfile(\
+            if not os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
+                  sample, looptype, R, i_file)):
+                  break
+            if not os.path.isfile(\
                   "data/%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\
                     sample, looptype, R, i_ori, i_file)):
                 filelists[-1].append(i_file)
-    #print filelists
-    #sys.exit(0)
+    if do_debug:
+        print filelists
+        sys.exit(0)
+
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    nprocs = comm.Get_size()
 
     for (looptype, i_ori, ori), filelist in zip(_list, filelists):
         print "Processing looptype %s, orientation %d" % (looptype, i_ori)
