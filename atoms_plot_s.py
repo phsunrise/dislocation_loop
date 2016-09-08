@@ -16,6 +16,11 @@ elif sample == 'Cu':
 elif sample == 'W':
     from W_parameters import *
 
+if len(sys.argv) == 3:
+    i_filemin, i_filemax = int(sys.argv[1]), int(sys.argv[2])
+else:
+    i_filemin, i_filemax = 0, np.iinfo(np.int32).max
+
 ## range of data to be shown
 rhocut = 1.5*R
 zcuthigh = 1.*R
@@ -25,15 +30,16 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 sdata_inside1 = [] 
 sdata_inside2 = [] 
-i_file = 0 
+i_file = i_filemin 
 while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
-        sample, looptype, R, i_file)):
+        sample, looptype, R, i_file)) and i_file <= i_filemax:
     sdata = np.load("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
             sample, looptype, R, i_file))
     counter = 0
     for line in sdata:
         if np.linalg.norm(line[0:2])<rhocut and 0.<line[2]<zcuthigh:
             sdata_inside1.append(line) ## lattice above z=0
+            #print np.einsum('ij,j', rot.T, line[0:3]/a0)
             counter += 1
         elif np.linalg.norm(line[0:2])<rhocut and zcutlow<line[2]<0.: 
             sdata_inside2.append(line) ## lattice below z=0
@@ -50,8 +56,6 @@ if looptype == 'int':
 elif looptype == 'vac':
     sdata_inside1[3:6] = 1.*sdata_inside1[3:6]
     sdata_inside2[3:6] = 1.*sdata_inside2[3:6]
-#ax.quiver(sdata_inside[0], sdata_inside[1], sdata_inside[2],\
-#          sdata_inside[3], sdata_inside[4], sdata_inside[5])
 ax.scatter(sdata_inside1[0]+sdata_inside1[3], \
            sdata_inside1[1]+sdata_inside1[4], \
            sdata_inside1[2]+sdata_inside1[5], \
@@ -89,5 +93,15 @@ elif looptype == 'vac':
 loopatoms = np.array(loopatoms).T
 ax.scatter(loopatoms[0], loopatoms[1], 0., c='r')
 
-ax.set_aspect('equal')
+## now set axis scale to be the same
+xmin, xmax = ax.get_xlim()
+ymin, ymax = ax.get_ylim()
+zmin, zmax = ax.get_zlim()
+xmid = (xmin+xmax) / 2.
+ymid = (ymin+ymax) / 2.
+zmid = (zmin+zmax) / 2.
+max_range = max(xmax-xmin, ymax-ymin, zmax-zmin)
+ax.set_xlim(xmid-max_range/2., xmid+max_range/2.)
+ax.set_ylim(ymid-max_range/2., ymid+max_range/2.)
+ax.set_zlim(zmid-max_range/2., zmid+max_range/2.)
 plt.show()
