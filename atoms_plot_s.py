@@ -30,12 +30,16 @@ while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
         sample, looptype, R, i_file)):
     sdata = np.load("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
             sample, looptype, R, i_file))
+    counter = 0
     for line in sdata:
         if np.linalg.norm(line[0:2])<rhocut and 0.<line[2]<zcuthigh:
             sdata_inside1.append(line) ## lattice above z=0
+            counter += 1
         elif np.linalg.norm(line[0:2])<rhocut and zcutlow<line[2]<0.: 
             sdata_inside2.append(line) ## lattice below z=0
-    print "processed file %d" % i_file
+            counter += 1
+    if counter > 0:
+        print "processed file %d, added %d points" % (i_file, counter)
     i_file += 1
 
 sdata_inside1 = np.array(sdata_inside1).T
@@ -73,11 +77,17 @@ elif looptype == 'vac':
         _ylims = np.roots([1., x, x**2-(rhocut/a1)**2])
         for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
             ''' According to the configuration defined in the parameter file,
-                    the z=0 plane should be type C
+                    the z=0 plane should be type C for FCC, and type A for BCC
             '''
-            if np.linalg.norm((x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p) > R:
-                loopatoms.append((x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p)
+            if crystaltype == 'FCC':
+                if np.linalg.norm((x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p) > R:
+                    loopatoms.append((x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p)
+            elif crystaltype == 'BCC':
+                if np.linalg.norm(x*ex_p+y*ey_p) > R:
+                    loopatoms.append(x*ex_p+y*ey_p)
 
 loopatoms = np.array(loopatoms).T
 ax.scatter(loopatoms[0], loopatoms[1], 0., c='r')
+
+ax.set_aspect('equal')
 plt.show()
