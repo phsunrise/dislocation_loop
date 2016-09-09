@@ -59,6 +59,10 @@ if __name__ == '__main__':
 
             ## read s data
             sdata = np.load("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample, looptype, R, i_file))
+            if looptype == 'vac':
+                pass
+            elif looptype == 'int':
+                sdata[:, 3:6] = -sdata[:, 3:6]
 
             amplitudes = [] 
             amplitudes1 = []  # amplitude inside rho<5R, |z|<10R for comparison
@@ -76,20 +80,19 @@ if __name__ == '__main__':
                 no laue term calculation in this script; this is taken care of 
                 in the intensity script
                 '''
-                for x, y, z, sx, sy, sz in sdata:
-                    r = np.array([x,y,z])
+                for line in sdata:
+                    r = line[0:3]
+                    s = line[3:6]
+                    r1 = r+s
                     qr = qloop.dot(r)
-                    if looptype == 'vac':
-                        Ks = Kloop.dot([sx, sy, sz])
-                    elif looptype == 'int':
-                        Ks = Kloop.dot([-sx, -sy, -sz])
+                    Ks = Kloop.dot(s)
 
                     _temp = (np.cos(qr)*(np.cos(Ks)-1.)-\
-                             np.sin(qr)*np.sin(Ks))*np.exp(-0.5*r.dot(r)/D**2)
+                             np.sin(qr)*np.sin(Ks))*np.exp(-0.5*r1.dot(r1)/D**2)
                     amplitude += _temp
-                    if np.sqrt(x**2+y**2)<=50. and abs(z)<=100.:
+                    if np.linalg.norm(r[0:2])<=50. and abs(r[2])<=100.:
                         amplitude1 += _temp
-                    if np.sqrt(x**2+y**2)<=100. and abs(z)<=200.:
+                    if np.linalg.norm(r[0:2])<=100. and abs(r[2])<=200.:
                         amplitude2 += _temp
 
                 amplitudes.append([qR/R, amplitude])
