@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 sample = 'W'
-looptype = 'vac'
+looptype = 'int'
 
 if sample == 'Al':
     from Al_parameters import *
@@ -22,8 +22,8 @@ else:
     i_filemin, i_filemax = 0, np.iinfo(np.int32).max
 
 ## range of data to be shown
-rhocut = 1.5*R
-zcuthigh = 1.*R
+rhocut = 1.2*R
+zcuthigh = 2*a0
 zcutlow = -a0
 
 fig = plt.figure()
@@ -72,7 +72,10 @@ if looptype == 'int':
     for x in np.arange(-_xlim, _xlim+1):
         _ylims = np.roots([1., x, x**2-(R/a1)**2])
         for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
-            loopatoms.append(x*ex_p+y*ey_p)
+            if crystaltype == 'FCC':
+                loopatoms.append(x*ex_p+y*ey_p)
+            elif crystaltype == 'BCC':
+                loopatoms.append((x-0.25)*ex_p+(y-0.25)*ey_p)
 elif looptype == 'vac':
     ## atoms outside of loop
     loopatoms = []

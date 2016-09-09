@@ -42,13 +42,20 @@ for looptype in looptypes:
                 _ylims = np.roots([1., x, x**2-(R/a1)**2])
                 for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
                     if looptype == 'int':
-                        r = x*ex_p+y*ey_p
+                        if crystaltype == 'FCC':
+                            r = x*ex_p+y*ey_p
+                        elif crystaltype == 'BCC':
+                            r = (x-0.25)*ex_p+(y-0.25)*ey_p
                         amplitude += np.exp(-0.5*r.dot(r)/D**2)*np.cos(qloop.dot(r))
                     elif looptype == 'vac':
                         ''' According to the configuration defined in the 
-                                parameter file, the z=0 plane should be type C
+                                parameter file, the z=0 plane should be type C for FCC,  
+                                and type A for BCC
                         '''
-                        r = (x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p
+                        if crystaltype == 'FCC':
+                            r = (x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p
+                        elif crystaltype == 'BCC':
+                            r = x*ex_p+y*ey_p
                         amplitude -= np.exp(-0.5*r.dot(r)/D**2)*np.cos(qloop.dot(r))
             amplitudes.append([qR/R, amplitude])
 
@@ -86,5 +93,6 @@ for looptype in looptypes:
     ax.plot(qR_array/R, intensities1*(qR_array/R)**4/R**2, color='b', ls=linestyle)
     ax.plot(qR_array/R, intensities2*(qR_array/R)**4/R**2, color='g', ls=linestyle)
 
+ax.set_xlim(-0.5, 0.5)
 ax.set_ylim(0., 10.)
 plt.show()
