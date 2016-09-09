@@ -4,10 +4,9 @@ The script is mostly written in loop coordinates
 '''
 import numpy as np
 import sys, os
-import matplotlib.pyplot as plt
 from info import *
 
-sample = 'Cu'
+sample = 'W'
 looptypes = ['int', 'vac']
 if sample == 'Al':
     from Al_parameters import *
@@ -18,7 +17,7 @@ elif sample == 'W':
 
 qR_array = R*np.linspace(-0.5, 0.5, 101)
 
-D = 4.0*R ## parameter in gaussian used to smooth out the boundary
+D = 3.0*R ## parameter in gaussian used to smooth out the boundary
 
 if __name__ == '__main__':
     from getopt import getopt
