@@ -1,7 +1,3 @@
-'''
-This code applies only to fcc crystals with {111} dislocation loops
-The script is mostly written in loop coordinates
-'''
 import numpy as np
 import sys, os
 from info import *
@@ -15,9 +11,9 @@ elif sample == 'Cu':
 elif sample == 'W':
     from W_parameters import *
 
-qR_array = R*np.linspace(-0.5, 0.5, 101)
+q_array = np.linspace(-0.5, 0.5, 101)
 
-D = 3.0*R ## parameter in gaussian used to smooth out the boundary
+D = 2.0*R ## parameter in gaussian used to smooth out the boundary
 
 if __name__ == '__main__':
     from getopt import getopt
@@ -67,8 +63,8 @@ if __name__ == '__main__':
             amplitudes = [] 
             amplitudes1 = []  # amplitude inside rho<5R, |z|<10R for comparison
             amplitudes2 = []  # amplitude inside rho<10R, |z|<20R for comparison
-            for i_qR, qR in enumerate(qR_array):
-                q = qR/R * np.einsum('ij,j', ori, eq)
+            for i_qval, qval in enumerate(q_array):
+                q = qabs * np.einsum('ij,j', ori, eq)
                 qloop = np.einsum('ij,j', rot, q)
                 K = np.einsum('ij,j', ori, h) + q
                 Kloop = np.einsum('ij,j', rot, K)
@@ -95,9 +91,9 @@ if __name__ == '__main__':
                     if np.linalg.norm(r[0:2])<=100. and abs(r[2])<=200.:
                         amplitude2 += _temp
 
-                amplitudes.append([qR/R, amplitude])
-                amplitudes1.append([qR/R, amplitude1])
-                amplitudes2.append([qR/R, amplitude2])
+                amplitudes.append([qval, amplitude])
+                amplitudes1.append([qval, amplitude1])
+                amplitudes2.append([qval, amplitude2])
 
             # save data
             np.save("data/%s_atoms_amplitude_%s_R%d_ori%d_%04d.npy"%(\

@@ -1,7 +1,3 @@
-'''
-This code applies only to fcc crystals with {111} dislocation loops
-The script is mostly written in loop coordinates
-'''
 import numpy as np
 import sys, os
 import matplotlib.pyplot as plt
@@ -24,29 +20,28 @@ for looptype in looptypes:
         print "starting orientation %d..." % i_ori
         amplitudes = [] 
         ## first calculate the laue term
-        for i_qR, qR in enumerate(qR_array):
-            q = qR/R * np.einsum('ij,j', ori, eq)
+        for i_qval, qval in enumerate(q_array):
+            q = qval * np.einsum('ij,j', ori, eq)
             qloop = np.einsum('ij,j', rot, q)
             K = np.einsum('ij,j', ori, h) + q
             Kloop = np.einsum('ij,j', rot, K)
 
             amplitude = 0.
-            amplitude1 = 0.
             '''
             The dislocation loop is inside the region r <= R, which
-                in p coordinates is x^2+y^2+xy <= (R/a1)^2. The constraint on
-                x is 3/4*x^2 <= (R/a1)^2
             '''
             _xlim = np.floor(R / a1 * 2./np.sqrt(3))
-            for x in np.arange(-_xlim, _xlim+1):
-                _ylims = np.roots([1., x, x**2-(R/a1)**2])
-                for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
+            for x in np.arange(-np.ceil(2.*R/a1), np.ceil(2.*R/a1)):
+                for y in np.arange(-np.ceil(2.*R/a1), np.ceil(2.*R/a1)):
                     if looptype == 'int':
                         if crystaltype == 'FCC':
                             r = x*ex_p+y*ey_p
                         elif crystaltype == 'BCC':
                             r = (x-0.25)*ex_p+(y-0.25)*ey_p
-                        amplitude += np.exp(-0.5*r.dot(r)/D**2)*np.cos(qloop.dot(r))
+
+                        if np.linalg.norm(r) <= R:
+                            amplitude += np.exp(\
+                                -0.5*r.dot(r)/D**2)*np.cos(qloop.dot(r))
                     elif looptype == 'vac':
                         ''' According to the configuration defined in the 
                                 parameter file, the z=0 plane should be type C for FCC,  
@@ -56,8 +51,10 @@ for looptype in looptypes:
                             r = (x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p
                         elif crystaltype == 'BCC':
                             r = x*ex_p+y*ey_p
-                        amplitude -= np.exp(-0.5*r.dot(r)/D**2)*np.cos(qloop.dot(r))
-            amplitudes.append([qR/R, amplitude])
+                        if np.linalg.norm(r) <= R:
+                            amplitude -= np.exp(\
+                                -0.5*r.dot(r)/D**2)*np.cos(qloop.dot(r))
+            amplitudes.append([qval, amplitude])
 
         amplitudes = np.array(amplitudes)
         amplitudes1 = np.copy(amplitudes)  # amplitude inside rho<5R, |z|<10R for comparison
@@ -89,9 +86,9 @@ for looptype in looptypes:
         linestyle = '--'
     elif looptype == 'int':
         linestyle = '-'
-    ax.plot(qR_array/R, intensities*(qR_array/R)**4/R**2, color='r', ls=linestyle)
-    ax.plot(qR_array/R, intensities1*(qR_array/R)**4/R**2, color='b', ls=linestyle)
-    ax.plot(qR_array/R, intensities2*(qR_array/R)**4/R**2, color='g', ls=linestyle)
+    ax.plot(q_array, intensities*(q_array)**4/R**2, color='r', ls=linestyle)
+    ax.plot(q_array, intensities1*(q_array)**4/R**2, color='b', ls=linestyle)
+    ax.plot(q_array, intensities2*(q_array)**4/R**2, color='g', ls=linestyle)
 
 ax.set_xlim(-0.5, 0.5)
 ax.set_ylim(0., 10.)
