@@ -5,6 +5,8 @@ from info import *
 from atoms_amplitude import *
 from formfactor import formfactor
 
+R = 10.
+D = 4.*R
 print "sample:", sample
 print "R=%.1f, D=%.1f*R"%(R, D/R)
 datadir = '%s_R%d/'%(sample, R)
@@ -80,6 +82,6 @@ for looptype in looptypes:
     #ax.plot(q_array, intensities1*(q_array)**4/R**2, color='b', ls=linestyle)
     #ax.plot(q_array, intensities2*(q_array)**4/R**2, color='g', ls=linestyle)
 
-ax.set_xlim(-0.5, 0.5)
-ax.set_ylim(0., 10.)
+ax.set_xlim(-0.3, 0.3)
+ax.set_ylim(0., 3.)
 plt.show()
