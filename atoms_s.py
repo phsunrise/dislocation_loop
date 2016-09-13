@@ -1,20 +1,17 @@
-'''
-This code applies only to fcc crystals with {111} dislocation loops
-The script is mostly written in loop coordinates
-'''
 import numpy as np
 import sys, os
 from getopt import getopt
 
 do_debug = False
+MAXTIER = 3
 
 opts, args = getopt(sys.argv[1:], "d")
 for o, a in opts:
     if o == '-d':
         do_debug = True
 
-sample = 'Cu'
-looptype = 'int'
+sample = 'W'
+looptypes = ['vac', 'int']
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -24,16 +21,18 @@ elif sample == 'W':
 
 # get number of files in "preproc"
 NFILES = 0 
-while os.path.isfile("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
-                        sample, looptype, NFILES)):
+while os.path.isfile("preproc/%s_atoms_s_vac_pre_T1_%04d.npy"%(\
+                        sample, NFILES)):
     NFILES += 1
 
 # get uncalculated files
 filelist = []
-for i_file in xrange(NFILES):
-    if not os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
-          sample, looptype, R, i_file)):
-        filelist.append(i_file)
+for looptype in looptypes:
+    for tier in range(1, MAXTIER+1):
+        for i_file in xrange(NFILES):
+            if not os.path.isfile("data/%s_atoms_s_%s_T%d_R%d_%04d.npy"%(\
+                  sample, looptype, tier, R, i_file)):
+                filelist.append([looptype, tier, i_file])
 if do_debug:
     print filelist
     print "%d files" % len(filelist)
@@ -43,14 +42,15 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 nprocs = comm.Get_size()
-for i_i_file, i_file in enumerate(filelist):
+for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
     if i_i_file % nprocs != rank:
         continue
 
-    xyz_list = np.load("preproc/%s_atoms_s_%s_pre_%04d.npy"%(\
-                            sample, looptype, i_file))
+    xyz_list = np.load("preproc/%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
+                            sample, looptype, tier, i_file))
     data = []
-    for x, y, z in xyz_list:
+    for xyz in xyz_list:
+        x, y, z = xyz[0:3]/R
         n = (30 if x**2+y**2+z**2>4. else 60)
         n1 = n
         integrand = 0.
@@ -79,6 +79,9 @@ for i_i_file, i_file in enumerate(filelist):
                 integrand += (coeff*eloop.dot(np.array([x,y,z]))*\
                     np.einsum('ij,i,jk', Ploop, eloop, gloop))
         s = -1./(4.*np.pi**2*R**2*n*abs(z))*integrand
-        data.append([x*R, y*R, z*R, s[0], s[1], s[2]])
+        if tier == 1:
+            data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2], f])
+        else:
+            data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2]])
 
-    np.save("data/%s_atoms_s_%s_R%d_%04d.npy"%(sample, looptype, R, i_file), data)
+    np.save("data/%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file), data)
