@@ -7,7 +7,7 @@ from formfactor import formfactor
 
 print "sample:", sample
 print "R=%.1f, D=%.1f*R"%(R, D/R)
-datadir = '%s_R%d_D_%.1fR/'%(sample, R, D/R)
+datadir = '%s_R%d/'%(sample, R)
 
 fig = plt.figure(figsize=(12,6))
 ax = fig.add_subplot(1, 1, 1)
@@ -55,7 +55,7 @@ for looptype in looptypes:
         ff_tier2 = np.array(ff_tier2)
         ff_tier3 = np.array(ff_tier3)
 
-        amplitudes[:,1] += *np.load(datadir+"%s_atoms_amplitude_%s_T1_R%d_ori%d_combined.npy"%(\
+        amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_T1_R%d_ori%d_combined.npy"%(\
                             sample, looptype, R, i_ori))[:,1]*2.
         amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_T2_R%d_ori%d_combined.npy"%(\
                             sample, looptype, R, i_ori))[:,1]*ff_tier2*2.
@@ -65,7 +65,6 @@ for looptype in looptypes:
         intensities.append(amplitudes[:,1]**2)
         #intensities1.append(amplitudes1[:,1]**2)
         #intensities2.append(amplitudes2[:,1]**2)
-        print "read %d files, done orientation %d" % (i_file, i_ori)
 
     # average over all orientations
     intensities = np.mean(np.array(intensities), axis=0)
