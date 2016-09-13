@@ -34,7 +34,7 @@ if __name__ == '__main__':
         while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(\
                   sample, looptype, tier, R, i_file)):
             if not os.path.isfile(\
-                  datadir_"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
+                  datadir+"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
                     sample, looptype, tier, R, i_ori, i_file)):
                 filelist.append([looptype, tier, i_ori, ori, i_file])
             i_file += 1
@@ -63,7 +63,7 @@ if __name__ == '__main__':
         #amplitudes1 = []  # amplitude inside rho<5R, |z|<10R for comparison
         #amplitudes2 = []  # amplitude inside rho<10R, |z|<20R for comparison
         for i_qval, qval in enumerate(q_array):
-            q = qabs * np.einsum('ij,j', ori, eq)
+            q = qval * np.einsum('ij,j', ori, eq)
             qloop = np.einsum('ij,j', rot, q)
             K = np.einsum('ij,j', ori, h) + q
             Kloop = np.einsum('ij,j', rot, K)
