@@ -55,12 +55,12 @@ for looptype in looptypes:
         ff_tier2 = np.array(ff_tier2)
         ff_tier3 = np.array(ff_tier3)
 
-        amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_T1_R%d_ori%d_combined.npy"%(\
-                            sample, looptype, R, i_ori))[:,1]
+        amplitudes[:,1] += *np.load(datadir+"%s_atoms_amplitude_%s_T1_R%d_ori%d_combined.npy"%(\
+                            sample, looptype, R, i_ori))[:,1]*2.
         amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_T2_R%d_ori%d_combined.npy"%(\
-                            sample, looptype, R, i_ori))[:,1]*ff_tier2
+                            sample, looptype, R, i_ori))[:,1]*ff_tier2*2.
         amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_T3_R%d_ori%d_combined.npy"%(\
-                            sample, looptype, R, i_ori))[:,1]*ff_tier3
+                            sample, looptype, R, i_ori))[:,1]*ff_tier3*2.
 
         intensities.append(amplitudes[:,1]**2)
         #intensities1.append(amplitudes1[:,1]**2)
