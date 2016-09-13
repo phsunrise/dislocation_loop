@@ -6,7 +6,7 @@ above, where f is the factor of the atom that needs to be considered
 import numpy as np
 import matplotlib.pyplot as plt
 import os, sys
-MAXTIER = 3
+from info import *
 
 do_save = True 
 
