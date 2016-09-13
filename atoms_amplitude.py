@@ -34,7 +34,7 @@ if __name__ == '__main__':
         while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(\
                   sample, looptype, tier, R, i_file)):
             if not os.path.isfile(\
-                  "data/%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
+                  datadir_"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
                     sample, looptype, tier, R, i_ori, i_file)):
                 filelist.append([looptype, tier, i_ori, ori, i_file])
             i_file += 1
@@ -53,7 +53,7 @@ if __name__ == '__main__':
             continue
 
         ## read s data
-        sdata = np.load("data/%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file))
+        sdata = np.load(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file))
         if looptype == 'vac':
             pass
         elif looptype == 'int':
@@ -95,7 +95,7 @@ if __name__ == '__main__':
             #amplitudes2.append([qval, amplitude2])
 
         # save data
-        np.save("data/%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
+        np.save(datadir+"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
                             sample, looptype, tier, R, i_ori, i_file), amplitudes)
         #np.save("data/%s_atoms_amplitude1_%s_T%d_R%d_ori%d_%04d.npy"%(\
         #                    sample, looptype, tier, R, i_ori, i_file), amplitudes1)
