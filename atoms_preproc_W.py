@@ -1,11 +1,12 @@
 '''
 This script generates the positions of atoms that we wish to calculate
-It is a list of (x,y,z,f) values, where f is the factor of the atom that
-needs to be considered
+It is a list of (x,y,z,f) values for tier 1, or (x,y,z) for tier 2 and
+above, where f is the factor of the atom that needs to be considered
 '''
 import numpy as np
 import matplotlib.pyplot as plt
 import os, sys
+MAXTIER = 3
 
 do_save = True 
 
@@ -13,7 +14,7 @@ size = 2**7 # an exponential of 2
 nfiles = 512 
 
 sample = 'W' 
-looptype = 'vac'
+looptype = 'int'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -28,7 +29,7 @@ if not os.path.isdir("preproc/"):
 
 ## Tier 1: single atoms
 ## first calculate size of each file
-totallen1 = (size-1)*(size*2-1)**2/2
+totallen1 = (size-1)*(size*2-1)**2/2 + (8*size-1)**2/2
 sublistlen1 = int(np.ceil(totallen1*1./nfiles))
 xyz_list1 = []
 counter1 = 0
@@ -43,7 +44,10 @@ for z_p in np.arange(1, size):
             if (xpy+xmy+z_p) % 2 == 0:
                 x_p = (xpy+xmy)/2.
                 y_p = (xpy-xmy)/2.
-                xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+                if looptype == 'vac':
+                    xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+                elif looptype == 'int':
+                    xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
 
                 f = 1. # factor of atom that needs to be considered
                 if z_p in [1, size-1]:
@@ -65,6 +69,36 @@ for z_p in np.arange(1, size):
                         xyz_list1 = []
                         counter1 = 0
                         i_file1 += 1
+
+# the plane of half atoms at bottom, up to tier 3
+z_p = 1 
+for xpy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
+    for xmy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
+        '''
+        since z_p is odd, we have plane B, which has an atom at x=y=1/2
+        '''
+        if (xpy+xmy+z_p) % 2 == 0:
+            x_p = (xpy+xmy)/2.
+            y_p = (xpy-xmy)/2.
+            if looptype == 'vac':
+                xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+            elif looptype == 'int':
+                xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
+
+            f = 1./2. # factor of atom that needs to be considered
+
+            xyz_list1.append(np.append(xyz, f))
+            counter1 += 1
+
+            if do_save:
+                if counter1 == sublistlen1:
+                    np.save("preproc/%s_atoms_s_%s_pre_T1_%04d.npy"%(\
+                        sample, looptype, i_file1), xyz_list1)
+                    print "saved file %d, list length = %d" % (\
+                            i_file1, len(xyz_list1))
+                    xyz_list1 = []
+                    counter1 = 0
+                    i_file1 += 1
 
 if do_save:
     if len(xyz_list1) > 0:
@@ -89,7 +123,10 @@ for z_p in np.arange(2, size*2, 2):
                 continue
             x_p = (xpy+xmy)/2.
             y_p = (xpy-xmy)/2.
-            xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+            if looptype == 'vac':
+                xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+            elif looptype == 'int':
+                xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
             xyz_list2.append(xyz)
             counter2 += 1
 
@@ -126,7 +163,10 @@ for z_p in np.arange(4, size*4, 4):
                 continue
             x_p = (xpy+xmy)/2.
             y_p = (xpy-xmy)/2.
-            xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+            if looptype == 'vac':
+                xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+            elif looptype == 'int':
+                xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
             xyz_list3.append(xyz)
             counter3 += 1
 
@@ -153,33 +193,43 @@ if do_save:
 if not do_save:
     print "length: %d, %d, %d" % (\
             len(xyz_list1), len(xyz_list2), len(xyz_list3))
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    for x,y,z,f in xyz_list1:
-        if np.round(z/a2) == 3.:
-            ax.scatter(x/a2, y/a0, color='b')
-            ax.text(x/a2, y/a0, "%d"%(1./f))
-        elif np.round(z/a2) == 2.:
-            ax.scatter(x/a2, y/a0, color='r', alpha=0.5)
-            ax.text(x/a2, y/a0, "%d"%(1./f))
-    for x,y,z in xyz_list2:
-        if np.round(z/a2) == 2.:
-            ax.scatter(x/a2, y/a0, color='g', alpha=0.5)
-    for x,y,z in xyz_list3:
-        if np.round(z/a2) == 4.:
-            ax.scatter(x/a2, y/a0, color='m', alpha=0.5)
+    ## now expand the list to include negative values
+    def addfliplist(xyz_list):
+        xyz_list = np.array(xyz_list)
+        xyz_list_copy = np.copy(xyz_list)
+        xyz_list_copy[:, 0:3] = -xyz_list_copy[:, 0:3]
+        return np.vstack((xyz_list, xyz_list_copy))
+    xyz_list1 = addfliplist(xyz_list1)
+    xyz_list2 = addfliplist(xyz_list2)
+    xyz_list3 = addfliplist(xyz_list3)
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
     for x,y,z,f in xyz_list1:
-        if np.round(y/a0) == 0.:
+        if np.round(z/a2*2) in [1., 2.]:
+            ax.scatter(x/a2, y/a0*2, color='b', alpha=0.5)
+            ax.text(x/a2, y/a0*2, "%d"%(1./f))
+        elif np.round(z/a2*2) in [3., 4.]:
+            ax.scatter(x/a2, y/a0*2, color='r', alpha=0.5)
+            ax.text(x/a2, y/a0*2, "%d"%(1./f))
+    for x,y,z in xyz_list2:
+        if np.round(z/a2*2) in [3., 4.]:
+            ax.scatter(x/a2, y/a0*2, color='g', alpha=0.5)
+    for x,y,z in xyz_list3:
+        if np.round(z/a2*2) in [7., 8.]:
+            ax.scatter(x/a2, y/a0*2, color='m', alpha=0.5)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    for x,y,z,f in xyz_list1:
+        if np.round(y/a0*2) == 0.:
             ax.scatter(x/a2, z/a2, color='b')
             ax.text(x/a2, z/a2, "%d"%(1./f))
     for x,y,z in xyz_list2:
-        if np.round(y/a0) == 0.:
+        if np.round(y/a0*2) == 0.:
             ax.scatter(x/a2, z/a2, color='g', alpha=0.5)
     for x,y,z in xyz_list3:
-        if np.round(y/a0) == 0.:
+        if np.round(y/a0*2) == 0.:
             ax.scatter(x/a2, z/a2, color='m', alpha=0.5)
 
     plt.show()
