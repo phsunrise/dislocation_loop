@@ -1,9 +1,9 @@
 import numpy as np
 import sys, os
 from getopt import getopt
+from info import *
 
 do_debug = False
-MAXTIER = 3
 
 opts, args = getopt(sys.argv[1:], "d")
 for o, a in opts:
@@ -19,6 +19,7 @@ elif sample == 'Cu':
 elif sample == 'W':
     from W_parameters import *
 
+datadir = "%s_R%d/" % (sample, R)
 # get number of files in "preproc"
 NFILES = 0 
 while os.path.isfile("preproc/%s_atoms_s_vac_pre_T1_%04d.npy"%(\
@@ -30,7 +31,7 @@ filelist = []
 for looptype in looptypes:
     for tier in range(1, MAXTIER+1):
         for i_file in xrange(NFILES):
-            if not os.path.isfile("data/%s_atoms_s_%s_T%d_R%d_%04d.npy"%(\
+            if not os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(\
                   sample, looptype, tier, R, i_file)):
                 filelist.append([looptype, tier, i_file])
 if do_debug:
@@ -80,8 +81,8 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
                     np.einsum('ij,i,jk', Ploop, eloop, gloop))
         s = -1./(4.*np.pi**2*R**2*n*abs(z))*integrand
         if tier == 1:
-            data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2], f])
+            data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2], xyz[3]])
         else:
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2]])
 
-    np.save("data/%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file), data)
+    np.save(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file), data)
