@@ -84,6 +84,8 @@ if __name__ == '__main__':
 
                 _temp = (np.cos(qr)*(np.cos(Ks)-1.)-\
                          np.sin(qr)*np.sin(Ks))*np.exp(-0.5*r1.dot(r1)/D**2)
+                if tier == 1:
+                    _temp *= line[6]
                 amplitude += _temp
                 #if np.linalg.norm(r[0:2])<=50. and abs(r[2])<=100.:
                 #    amplitude1 += _temp
