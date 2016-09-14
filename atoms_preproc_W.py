@@ -72,8 +72,9 @@ if 1 in tiers:
                             counter1 = 0
                             i_file1 += 1
 
-    # the plane of half atoms at bottom, up to tier 3
+    # the plane of half atoms at bottom, up to MAXTIER
     z_p = 1 
+    f = 1./2. # factor of atom that needs to be considered
     for xpy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
         for xmy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
             '''
@@ -86,8 +87,6 @@ if 1 in tiers:
                     xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
                 elif looptype == 'int':
                     xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
-
-                f = 1./2. # factor of atom that needs to be considered
 
                 xyz_list1.append(np.append(xyz, f))
                 counter1 += 1
