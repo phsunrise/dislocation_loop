@@ -1,3 +1,3 @@
 plot_dir = "/Users/phsun/theory/plots/"
 
-MAXTIER = 4 
+MAXTIER = 5 

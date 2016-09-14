@@ -9,9 +9,9 @@ import os, sys
 from info import *
 
 do_save = True 
-tiers = [4]
+tiers = [5]
 
-size0 = 2**7 # a multiple of 2
+size = 2**7 # a multiple of 2
 nfiles = 512 
 
 sample = 'W' 
@@ -31,7 +31,6 @@ if not os.path.isdir("preproc/"):
 if 1 in tiers:
     ## Tier 1: single atoms
     ## first calculate size of each file
-    size = size0
     totallen1 = (size-1)*(size*2-1)**2/2 + (8*size-1)**2/2
     sublistlen1 = int(np.ceil(totallen1*1./nfiles))
     xyz_list1 = []
@@ -114,7 +113,6 @@ if 1 in tiers:
 
 if 2 in tiers:
     ## Tier 2: single cells
-    size = size0
     totallen2 = (size-1)*(size*2-1)**2 - (size/2-1)*(size-1)**2
     sublistlen2 = int(np.ceil(totallen2*1./nfiles))
     xyz_list2 = []
@@ -156,7 +154,6 @@ if 2 in tiers:
 
 if 3 in tiers:
     ## Tier 3: 2^3 cells
-    size = size0
     totallen3 = (size-1)*(size*2-1)**2 - (size/2-1)*(size-1)**2
     sublistlen3 = int(np.ceil(totallen3*1./nfiles))
     xyz_list3 = []
@@ -198,17 +195,16 @@ if 3 in tiers:
 
 if 4 in tiers:
     ## Tier 4: 4^3 cells
-    size = 2*size0
     totallen4 = (size-1)*(size*2-1)**2 - (size/2-1)*(size-1)**2
     sublistlen4 = int(np.ceil(totallen4*1./nfiles))
     xyz_list4 = []
     counter4 = 0
     i_file4 = 0
     ## first expand along z
-    for z_p in np.arange(4, size*4, 4):
-        for xpy in np.arange(-4*size+4, 4*size, 4):
-            for xmy in np.arange(-4*size+4, 4*size, 4):
-                if z_p < 2*size and abs(xpy) < 2*size and abs(xmy) < 2*size:
+    for z_p in np.arange(8, size*8, 8):
+        for xpy in np.arange(-8*size+8, 8*size, 8):
+            for xmy in np.arange(-8*size+8, 8*size, 8):
+                if z_p < 4*size and abs(xpy) < 4*size and abs(xmy) < 4*size:
                     continue
                 x_p = (xpy+xmy)/2.
                 y_p = (xpy-xmy)/2.
@@ -237,6 +233,48 @@ if 4 in tiers:
                     i_file4, len(xyz_list4))
             i_file4 += 1
         print "done tier 4, total %d files" % (i_file4)
+
+if 5 in tiers:
+    ## Tier 5: 8^3 cells
+    totallen5 = (size-1)*(size*2-1)**2 - (size/2-1)*(size-1)**2
+    sublistlen5 = int(np.ceil(totallen5*1./nfiles))
+    xyz_list5 = []
+    counter5 = 0
+    i_file5 = 0
+    ## first expand along z
+    for z_p in np.arange(16, size*16, 16):
+        for xpy in np.arange(-16*size+16, 16*size, 16):
+            for xmy in np.arange(-16*size+16, 16*size, 16):
+                if z_p < 8*size and abs(xpy) < 8*size and abs(xmy) < 8*size:
+                    continue
+                x_p = (xpy+xmy)/2.
+                y_p = (xpy-xmy)/2.
+                if looptype == 'vac':
+                    xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+                elif looptype == 'int':
+                    xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
+                xyz_list5.append(xyz)
+                counter5 += 1
+
+                if do_save:
+                    if counter5 == sublistlen5:
+                        np.save("preproc/%s_atoms_s_%s_pre_T5_%04d.npy"%(\
+                            sample, looptype, i_file5), xyz_list5)
+                        print "saved file %d, list length = %d" % (\
+                                i_file5, len(xyz_list5))
+                        xyz_list5 = []
+                        counter5 = 0
+                        i_file5 += 1
+
+    if do_save:
+        if len(xyz_list5) > 0:
+            np.save("preproc/%s_atoms_s_%s_pre_T5_%04d.npy"%(\
+                sample, looptype, i_file5), xyz_list5)
+            print "saved file %d, list length = %d" % (\
+                    i_file5, len(xyz_list5))
+            i_file5 += 1
+        print "done tier 5, total %d files" % (i_file5)
+
 
 ## plotting 
 if not do_save:
