@@ -9,10 +9,10 @@ import os, sys
 from info import *
 
 do_save = True 
-tiers = [5]
+tiers = [1, 2, 3]
 
 size = 2**7 # a multiple of 2
-nfiles = 512 
+nfiles = 8192 
 
 sample = 'W' 
 looptype = 'int'
