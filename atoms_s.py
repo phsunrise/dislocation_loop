@@ -54,7 +54,7 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
     xyz_list = np.load("preproc/%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
                             sample, looptype, tier, i_file))
     data = []
-    for xyz in xyz_list:
+    for i_xyz, xyz in enumerate(xyz_list):
         x, y, z = xyz[0:3]/R
 
         def func(th, th1, ind):
@@ -90,6 +90,8 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2], xyz[3]])
         else:
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2]])
+        print "done %s, tier %d, file %04d, entry %04d" % (\
+                    looptype, tier, i_file, i_xyz)
 
     data = np.array(data)
     if looptype == 'int':
