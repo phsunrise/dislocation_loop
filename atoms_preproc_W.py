@@ -12,7 +12,6 @@ do_save = True
 tiers = [1, 2, 3]
 
 size = 2**7 # a multiple of 2
-nfiles = 8192 
 
 sample = 'W' 
 looptype = 'int'
@@ -32,7 +31,7 @@ if 1 in tiers:
     ## Tier 1: single atoms
     ## first calculate size of each file
     totallen1 = (size-1)*(size*2-1)**2/2 + (8*size-1)**2/2
-    sublistlen1 = int(np.ceil(totallen1*1./nfiles))
+    sublistlen1 = int(np.ceil(totallen1*1./NFILES))
     xyz_list1 = []
     counter1 = 0
     i_file1 = 0
@@ -113,7 +112,7 @@ if 1 in tiers:
 if 2 in tiers:
     ## Tier 2: single cells
     totallen2 = (size-1)*(size*2-1)**2 - (size/2-1)*(size-1)**2
-    sublistlen2 = int(np.ceil(totallen2*1./nfiles))
+    sublistlen2 = int(np.ceil(totallen2*1./NFILES))
     xyz_list2 = []
     counter2 = 0
     i_file2 = 0
@@ -154,7 +153,7 @@ if 2 in tiers:
 if 3 in tiers:
     ## Tier 3: 2^3 cells
     totallen3 = (size-1)*(size*2-1)**2 - (size/2-1)*(size-1)**2
-    sublistlen3 = int(np.ceil(totallen3*1./nfiles))
+    sublistlen3 = int(np.ceil(totallen3*1./NFILES))
     xyz_list3 = []
     counter3 = 0
     i_file3 = 0
@@ -195,7 +194,7 @@ if 3 in tiers:
 if 4 in tiers:
     ## Tier 4: 4^3 cells
     totallen4 = (size-1)*(size*2-1)**2 - (size/2-1)*(size-1)**2
-    sublistlen4 = int(np.ceil(totallen4*1./nfiles))
+    sublistlen4 = int(np.ceil(totallen4*1./NFILES))
     xyz_list4 = []
     counter4 = 0
     i_file4 = 0
@@ -236,7 +235,7 @@ if 4 in tiers:
 if 5 in tiers:
     ## Tier 5: 8^3 cells
     totallen5 = (size-1)*(size*2-1)**2 - (size/2-1)*(size-1)**2
-    sublistlen5 = int(np.ceil(totallen5*1./nfiles))
+    sublistlen5 = int(np.ceil(totallen5*1./NFILES))
     xyz_list5 = []
     counter5 = 0
     i_file5 = 0

@@ -1,3 +1,4 @@
 plot_dir = "/Users/phsun/theory/plots/"
 
-MAXTIER = 5 
+MAXTIER = 3 
+NFILES = 8192

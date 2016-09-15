@@ -24,19 +24,14 @@ elif sample == 'W':
     from W_parameters import *
 
 datadir = "%s_R%d/" % (sample, R)
-# get number of files in "preproc"
-NFILES = 0 
-while os.path.isfile("preproc/%s_atoms_s_vac_pre_T1_%04d.npy"%(\
-                        sample, NFILES)):
-    NFILES += 1
 
 # get uncalculated files
 filelist = []
 for looptype in looptypes:
     for tier in range(1, MAXTIER+1):
         for i_file in xrange(NFILES):
-            if not os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(\
-                  sample, looptype, tier, R, i_file)):
+            if os.path.isfile("preproc/%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
+               sample, looptype, tier, i_file)) and not os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file)):
                 filelist.append([looptype, tier, i_file])
 if do_debug:
     print filelist
