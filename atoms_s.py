@@ -85,8 +85,10 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2], xyz[3]])
         else:
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2]])
-        print "done %s, tier %d, file %04d, entry %04d" % (\
-                    looptype, tier, i_file, i_xyz)
+        
+        if i_file % 10 == 0:
+            print "done %s, tier %d, file %04d, entry %04d" % (\
+                        looptype, tier, i_file, i_xyz)
 
     data = np.array(data)
     if looptype == 'int':
