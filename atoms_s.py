@@ -1,4 +1,8 @@
+'''
+Adaptive quadrature method
+'''
 import numpy as np
+from scipy.integrate import dblquad 
 import sys, os
 from getopt import getopt
 from info import *
@@ -53,60 +57,34 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
     for xyz in xyz_list:
         x, y, z = xyz[0:3]/R
 
-        s_prev = []
-        n = 1 
-        n1 = 1 
-        th1_array = [2.*np.pi]
-        th_array = [np.pi]
-        integrand = 0.
-        flag = 0 # 0 to double n1 first, 1 to double n first
-        justchangedflag = False
-        while True:
-            for th1 in th1_array: 
-                a = -(x*np.cos(th1)+y*np.sin(th1)+1.)/z
-                b = -(x*np.cos(th1)+y*np.sin(th1)-1.)/z
-                for th in th_array: 
-                    t = (b+a)/2.+(b-a)*np.cos(th)/2.
-                    e = (np.cos(th1)*ex+np.sin(th1)*ey+t*ez)/(1.+t**2)**0.5
-                    eloop = np.array([np.cos(th1),np.sin(th1),t])/(1.+t**2)**0.5
-                    g = np.zeros((3,3))
-                    sum1 = sum(e**2/(C44+d*e**2))
-                    for i in xrange(3):
-                        for j in xrange(3):
-                            g[i,j] = ((1 if i==j else 0)/(C44+d*e[i]**2) - \
-                                (e[i]*e[j]/(C44+d*e[i]**2)/(C44+d*e[j]**2)*\
-                                 (C44+C12)/(1.+(C44+C12)*sum1)
-                                )
-                              )
-                    gloop =  np.einsum('ij,kl,jl', rot, rot, g)
-                    integrand += (eloop.dot(np.array([x,y,z]))*\
-                        np.einsum('ij,i,jk', Ploop, eloop, gloop))
-            s = -1./(4.*np.pi**2*R**2*n*abs(z))*integrand*2.*np.pi/n1
+        def func(th, th1, ind):
+            a = -(x*np.cos(th1)+y*np.sin(th1)+1.)/z
+            b = -(x*np.cos(th1)+y*np.sin(th1)-1.)/z
+            t = (b+a)/2.+(b-a)*np.cos(th)/2.
+            e = (np.cos(th1)*ex+np.sin(th1)*ey+t*ez)/(1.+t**2)**0.5
+            eloop = np.array([np.cos(th1),np.sin(th1),t])/(1.+t**2)**0.5
+            g = np.zeros((3,3))
+            sum1 = sum(e**2/(C44+d*e**2))
+            for i in xrange(3):
+                for j in xrange(3):
+                    g[i,j] = ((1 if i==j else 0)/(C44+d*e[i]**2) - \
+                        (e[i]*e[j]/(C44+d*e[i]**2)/(C44+d*e[j]**2)*\
+                         (C44+C12)/(1.+(C44+C12)*sum1)
+                        )
+                      )
+            gloop =  np.einsum('ij,kl,jl', rot, rot, g)
+            return (eloop.dot(np.array([x,y,z]))*\
+                np.einsum('ij,i,jk', Ploop, eloop, gloop))[ind]
 
-            if s_prev != [] and max(abs((s-s_prev)/s)) < 1.e-10:
-                if justchangedflag:
-                    break
-                s_prev = s
-                flag = (flag+1) % 2
-                justchangedflag = True
-                if flag == 0:
-                    n1 *= 2 
-                    th1_array = np.arange(2*np.pi/n1, 2.*np.pi*(1.+1./n1), 4.*np.pi/n1)
-                    th_array = np.arange(np.pi/n, np.pi*(1.+1./n), np.pi/n)
-                elif flag == 1:
-                    n *= 2
-                    th1_array = np.arange(2*np.pi/n1, 2.*np.pi*(1.+1./n1), 2.*np.pi/n1)
-                    th_array = np.arange(np.pi/n, np.pi*(1.+1./n), 2.*np.pi/n)
-                continue
+        integrand0, err = dblquad(func, 0., 2.*np.pi, \
+                lambda x: -np.pi, lambda x: np.pi, args=(0,))
+        integrand1, err = dblquad(func, 0., 2.*np.pi, \
+                lambda x: -np.pi, lambda x: np.pi, args=(1,))
+        integrand2, err = dblquad(func, 0., 2.*np.pi, \
+                lambda x: -np.pi, lambda x: np.pi, args=(2,))
 
-            justchangedflag = False
-            s_prev = s
-            if flag == 0:
-                n1 *= 2 
-                th1_array = np.arange(2*np.pi/n1, 2.*np.pi*(1.+1./n1), 4.*np.pi/n1)
-            elif flag == 1:
-                n *= 2
-                th_array = np.arange(np.pi/n, np.pi*(1.+1./n), 2.*np.pi/n)
+        s = -1./(8.*np.pi**3*R**2*abs(z))*np.array(\
+                [integrand0, integrand1, integrand2])
 
         if tier == 1:
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2], xyz[3]])
@@ -114,6 +92,6 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2]])
 
     data = np.array(data)
-    if looptype = 'int':
+    if looptype == 'int':
         data[:,3:6] = -data[:,3:6]
     np.save(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file), data)
