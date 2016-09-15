@@ -54,10 +54,6 @@ if __name__ == '__main__':
 
         ## read s data
         sdata = np.load(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file))
-        if looptype == 'vac':
-            pass
-        elif looptype == 'int':
-            sdata[:, 3:6] = -sdata[:, 3:6]
 
         amplitudes = [] 
         #amplitudes1 = []  # amplitude inside rho<5R, |z|<10R for comparison
@@ -72,8 +68,8 @@ if __name__ == '__main__':
             #amplitude1 = 0.
             #amplitude2 = 0.
             ''' 
-            no laue term or form factor calculation in this script; these are taken care of 
-            in the intensity script
+            no laue term or form factor calculation in this script; 
+            these are taken care of in the intensity script
             '''
             for line in sdata:
                 r = line[0:3]
@@ -83,7 +79,7 @@ if __name__ == '__main__':
                 Ks = Kloop.dot(s)
 
                 _temp = (np.cos(qr)*(np.cos(Ks)-1.)-\
-                         np.sin(qr)*np.sin(Ks))*np.exp(-0.5*r1.dot(r1)/D**2)
+                    np.sin(qr)*np.sin(Ks))*np.exp(-0.5*r1.dot(r1)/D**2)
                 if tier == 1:
                     _temp *= line[6]
                 amplitude += _temp

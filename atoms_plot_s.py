@@ -7,14 +7,11 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 sample = 'W'
-looptype = 'int'
+from W_parameters import *
+looptype = 'vac'
+R = 20.
 
-if sample == 'Al':
-    from Al_parameters import *
-elif sample == 'Cu':
-    from Cu_parameters import *
-elif sample == 'W':
-    from W_parameters import *
+datadir = "%s_R%d/" % (sample, R)
 
 if len(sys.argv) == 3:
     i_filemin, i_filemax = int(sys.argv[1]), int(sys.argv[2])
@@ -22,26 +19,27 @@ else:
     i_filemin, i_filemax = 0, np.iinfo(np.int32).max
 
 ## range of data to be shown
-rhocut = 1.2*R
-zcuthigh = 2*a0
-zcutlow = -a0
+rhocut = 0.5*R
+zcuthigh = 3*a0
+zcutlow = -2*a0
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 sdata_inside1 = [] 
 sdata_inside2 = [] 
 i_file = i_filemin 
-while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
+while os.path.isfile(datadir+"%s_atoms_s_%s_T1_R%d_%04d.npy"%(\
         sample, looptype, R, i_file)) and i_file <= i_filemax:
-    sdata = np.load("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
+    sdata = np.load(datadir+"%s_atoms_s_%s_T1_R%d_%04d.npy"%(\
             sample, looptype, R, i_file))
+    sdata = np.vstack((sdata, -sdata))
     counter = 0
     for line in sdata:
-        if np.linalg.norm(line[0:2])<rhocut and 0.<line[2]<zcuthigh:
+        if np.linalg.norm(line[0:2])<=rhocut and 0.<line[2]<=zcuthigh:
             sdata_inside1.append(line) ## lattice above z=0
             #print np.einsum('ij,j', rot.T, line[0:3]/a0)
             counter += 1
-        elif np.linalg.norm(line[0:2])<rhocut and zcutlow<line[2]<0.: 
+        elif np.linalg.norm(line[0:2])<=rhocut and zcutlow<=line[2]<0.: 
             sdata_inside2.append(line) ## lattice below z=0
             counter += 1
     if counter > 0:
@@ -50,12 +48,6 @@ while os.path.isfile("data/%s_atoms_s_%s_R%d_%04d.npy"%(\
 
 sdata_inside1 = np.array(sdata_inside1).T
 sdata_inside2 = np.array(sdata_inside2).T
-if looptype == 'int':
-    sdata_inside1[3:6] = -1.*sdata_inside1[3:6]
-    sdata_inside2[3:6] = -1.*sdata_inside2[3:6]
-elif looptype == 'vac':
-    sdata_inside1[3:6] = 1.*sdata_inside1[3:6]
-    sdata_inside2[3:6] = 1.*sdata_inside2[3:6]
 ax.scatter(sdata_inside1[0]+sdata_inside1[3], \
            sdata_inside1[1]+sdata_inside1[4], \
            sdata_inside1[2]+sdata_inside1[5], \
@@ -68,33 +60,23 @@ ax.scatter(sdata_inside2[0]+sdata_inside2[3], \
 if looptype == 'int':
     ## atoms inside loop
     loopatoms = []
-    _xlim = np.floor(R / a1 * 2./np.sqrt(3))
-    for x in np.arange(-_xlim, _xlim+1):
-        _ylims = np.roots([1., x, x**2-(R/a1)**2])
-        for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
-            if crystaltype == 'FCC':
-                loopatoms.append(x*ex_p+y*ey_p)
-            elif crystaltype == 'BCC':
-                loopatoms.append((x-0.25)*ex_p+(y-0.25)*ey_p)
+    for x_p in np.arange(-np.ceil(2.*R/a1), np.ceil(2.*R/a1)):
+        for y_p in np.arange(-np.ceil(2.*R/a1), np.ceil(2.*R/a1)):
+            r = x_p*ex_p + y_p*ey_p
+            if np.linalg.norm(r) <= R:
+                loopatoms.append(r)
 elif looptype == 'vac':
     ## atoms outside of loop
     loopatoms = []
-    _xlim = np.floor(rhocut / a1 * 2./np.sqrt(3))
-    for x in np.arange(-_xlim, _xlim+1):
-        _ylims = np.roots([1., x, x**2-(rhocut/a1)**2])
-        for y in np.arange(np.ceil(np.min(_ylims)), np.floor(np.max(_ylims))+1):
-            ''' According to the configuration defined in the parameter file,
-                    the z=0 plane should be type C for FCC, and type A for BCC
-            '''
-            if crystaltype == 'FCC':
-                if np.linalg.norm((x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p) > R:
-                    loopatoms.append((x+orig_C[0])*ex_p+(y+orig_C[1])*ey_p)
-            elif crystaltype == 'BCC':
-                if np.linalg.norm(x*ex_p+y*ey_p) > R:
-                    loopatoms.append(x*ex_p+y*ey_p)
+    for x_p in np.arange(-np.ceil(2.*rhocut/a1), np.ceil(2.*rhocut/a1)):
+        for y_p in np.arange(-np.ceil(2.*rhocut/a1), np.ceil(2.*rhocut/a1)):
+            r = x_p*ex_p + y_p*ey_p
+            if R < np.linalg.norm(r) <= rhocut:
+                loopatoms.append(r)
 
 loopatoms = np.array(loopatoms).T
-ax.scatter(loopatoms[0], loopatoms[1], 0., c='r')
+if len(loopatoms) > 0:
+    ax.scatter(loopatoms[0], loopatoms[1], 0., c='r')
 
 ## now set axis scale to be the same
 xmin, xmax = ax.get_xlim()
