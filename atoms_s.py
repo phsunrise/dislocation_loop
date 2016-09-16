@@ -4,6 +4,7 @@ Adaptive quadrature method
 import numpy as np
 from scipy.integrate import dblquad 
 import sys, os
+from datetime import datetime
 from getopt import getopt
 from info import *
 
@@ -87,8 +88,8 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2]])
         
         if i_file % 10 == 0:
-            print "done %s, tier %d, file %04d, entry %04d" % (\
-                        looptype, tier, i_file, i_xyz)
+            print "done %s, tier %d, file %04d, entry %04d, at %s" % (\
+                        looptype, tier, i_file, i_xyz, datetime.now())
 
     data = np.array(data)
     if looptype == 'int':
