@@ -31,7 +31,7 @@ if __name__ == '__main__':
     filelist = []
     for looptype, tier, i_ori, ori in _list:
         i_file = 0
-        while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(\
+        while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(\
                   sample, looptype, tier, R, i_file)):
             if not os.path.isfile(\
                   datadir+"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
@@ -53,7 +53,7 @@ if __name__ == '__main__':
             continue
 
         ## read s data
-        sdata = np.load(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file))
+        sdata = np.load(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(sample, looptype, tier, R, i_file))
 
         amplitudes = [] 
         #amplitudes1 = []  # amplitude inside rho<5R, |z|<10R for comparison
