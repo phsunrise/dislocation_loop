@@ -1,7 +1,7 @@
-#BSUB -W 0:15
-#BSUB -n 1024 
+#BSUB -W 24:00 
+#BSUB -n 750 
 #BSUB -e %J.err
 #BSUB -o %J.out
 #BSUB -q bulletmpi-large 
 
-mpiexec -np 1024 python s.py
+mpiexec -np 750 python atoms_amplitude_poly.py
