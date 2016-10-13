@@ -9,7 +9,7 @@ import os, sys
 from info import *
 
 do_save = True 
-tiers = [1, 2, 3]
+tiers = [1]
 
 size = 2**7 # a multiple of 2
 
@@ -30,7 +30,7 @@ if not os.path.isdir("preproc/"):
 if 1 in tiers:
     ## Tier 1: single atoms
     ## first calculate size of each file
-    totallen1 = (size-1)*(size*2-1)**2/2 + (8*size-1)**2/2
+    totallen1 = (size-1)*(size*2-1)**2/2 #+ (8*size-1)**2/2 # second term is the plane of half atoms
     sublistlen1 = int(np.ceil(totallen1*1./NFILES))
     xyz_list1 = []
     counter1 = 0
@@ -57,6 +57,8 @@ if 1 in tiers:
                         f = f/2.
                     if abs(xmy) == size-1:
                         f = f/2.
+                    if z_p == 1:
+                        f += 0.5 # add back the half atoms on bottom plane
 
                     xyz_list1.append(np.append(xyz, f))
                     counter1 += 1
@@ -71,34 +73,34 @@ if 1 in tiers:
                             counter1 = 0
                             i_file1 += 1
 
-    # the plane of half atoms at bottom, up to MAXTIER
-    z_p = 1 
-    f = 1./2. # factor of atom that needs to be considered
-    for xpy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
-        for xmy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
-            '''
-            since z_p is odd, we have plane B, which has an atom at x=y=1/2
-            '''
-            if (xpy+xmy+z_p) % 2 == 0:
-                x_p = (xpy+xmy)/2.
-                y_p = (xpy-xmy)/2.
-                if looptype == 'vac':
-                    xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
-                elif looptype == 'int':
-                    xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
+    ## the plane of half atoms at bottom, up to MAXTIER
+    #z_p = 1 
+    #f = 0.5 # factor of atom that needs to be considered
+    #for xpy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
+    #    for xmy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
+    #        '''
+    #        since z_p is odd, we have plane B, which has an atom at x=y=1/2
+    #        '''
+    #        if (xpy+xmy+z_p) % 2 == 0:
+    #            x_p = (xpy+xmy)/2.
+    #            y_p = (xpy-xmy)/2.
+    #            if looptype == 'vac':
+    #                xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+    #            elif looptype == 'int':
+    #                xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
 
-                xyz_list1.append(np.append(xyz, f))
-                counter1 += 1
+    #            xyz_list1.append(np.append(xyz, f))
+    #            counter1 += 1
 
-                if do_save:
-                    if counter1 == sublistlen1:
-                        np.save("preproc/%s_atoms_s_%s_pre_T1_%04d.npy"%(\
-                            sample, looptype, i_file1), xyz_list1)
-                        print "saved file %d, list length = %d" % (\
-                                i_file1, len(xyz_list1))
-                        xyz_list1 = []
-                        counter1 = 0
-                        i_file1 += 1
+    #            if do_save:
+    #                if counter1 == sublistlen1:
+    #                    np.save("preproc/%s_atoms_s_%s_pre_T1_%04d.npy"%(\
+    #                        sample, looptype, i_file1), xyz_list1)
+    #                    print "saved file %d, list length = %d" % (\
+    #                            i_file1, len(xyz_list1))
+    #                    xyz_list1 = []
+    #                    counter1 = 0
+    #                    i_file1 += 1
 
     if do_save:
         if len(xyz_list1) > 0:

@@ -18,6 +18,7 @@ rot = np.array([ex, ey, ez])
 
 F = np.pi*R**2 * ez
 B = a0/2.*np.array([1.,1.,1.])
+Bloop = np.einsum('ij,j', rot, B)
 
 ## W elastic constants at 300K, taken from Featherston (1963)
 C11 = 5.2327 

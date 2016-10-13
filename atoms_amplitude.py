@@ -12,9 +12,9 @@ elif sample == 'W':
     from W_parameters import *
 
 datadir = "%s_R%d/" % (sample, R)
-q_array = np.linspace(-0.5, 0.5, 101)
+q_array = np.linspace(-1.0, 1.0, 201)
 
-D = 4.0*R ## parameter in gaussian used to smooth out the boundary
+D = 2.5*R ## parameter in gaussian used to smooth out the boundary
 
 if __name__ == '__main__':
     from getopt import getopt
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(\
                   sample, looptype, tier, R, i_file)):
             if not os.path.isfile(\
-                  datadir+"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
+                  datadir+"%s_atoms_amplitude1_%s_T%d_R%d_ori%d_%04d.npy"%(\
                     sample, looptype, tier, R, i_ori, i_file)):
                 filelist.append([looptype, tier, i_ori, ori, i_file])
             i_file += 1
@@ -56,8 +56,8 @@ if __name__ == '__main__':
         sdata = np.load(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(sample, looptype, tier, R, i_file))
 
         amplitudes = [] 
-        #amplitudes1 = []  # amplitude inside rho<5R, |z|<10R for comparison
-        #amplitudes2 = []  # amplitude inside rho<10R, |z|<20R for comparison
+        amplitudes1 = []  # amplitude inside rho<50, |z|<100 for comparison
+        amplitudes2 = []  # amplitude inside rho<100, |z|<200 for comparison
         for i_qval, qval in enumerate(q_array):
             q = qval * np.einsum('ij,j', ori, eq)
             qloop = np.einsum('ij,j', rot, q)
@@ -65,8 +65,8 @@ if __name__ == '__main__':
             Kloop = np.einsum('ij,j', rot, K)
 
             amplitude = 0.
-            #amplitude1 = 0.
-            #amplitude2 = 0.
+            amplitude1 = 0.
+            amplitude2 = 0.
             ''' 
             no laue term or form factor calculation in this script; 
             these are taken care of in the intensity script
@@ -83,19 +83,19 @@ if __name__ == '__main__':
                 if tier == 1:
                     _temp *= line[6]
                 amplitude += _temp
-                #if np.linalg.norm(r[0:2])<=50. and abs(r[2])<=100.:
-                #    amplitude1 += _temp
-                #if np.linalg.norm(r[0:2])<=100. and abs(r[2])<=200.:
-                #    amplitude2 += _temp
+                if np.linalg.norm(r[0:2])<=50. and abs(r[2])<=100.:
+                    amplitude1 += _temp
+                if np.linalg.norm(r[0:2])<=100. and abs(r[2])<=200.:
+                    amplitude2 += _temp
 
             amplitudes.append([qval, amplitude])
-            #amplitudes1.append([qval, amplitude1])
-            #amplitudes2.append([qval, amplitude2])
+            amplitudes1.append([qval, amplitude1])
+            amplitudes2.append([qval, amplitude2])
 
         # save data
         np.save(datadir+"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
                             sample, looptype, tier, R, i_ori, i_file), amplitudes)
-        #np.save("data/%s_atoms_amplitude1_%s_T%d_R%d_ori%d_%04d.npy"%(\
-        #                    sample, looptype, tier, R, i_ori, i_file), amplitudes1)
-        #np.save("data/%s_atoms_amplitude2_%s_T%d_R%d_ori%d_%04d.npy"%(\
-        #                    sample, looptype, tier, R, i_ori, i_file), amplitudes2)
+        np.save(datadir+"%s_atoms_amplitude1_%s_T%d_R%d_ori%d_%04d.npy"%(\
+                            sample, looptype, tier, R, i_ori, i_file), amplitudes1)
+        np.save(datadir+"%s_atoms_amplitude2_%s_T%d_R%d_ori%d_%04d.npy"%(\
+                            sample, looptype, tier, R, i_ori, i_file), amplitudes2)

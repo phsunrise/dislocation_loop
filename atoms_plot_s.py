@@ -9,7 +9,6 @@ from mpl_toolkits.mplot3d import Axes3D
 sample = 'W'
 from W_parameters import *
 looptype = 'vac'
-R = 20.
 
 datadir = "%s_R%d/" % (sample, R)
 
@@ -19,22 +18,26 @@ else:
     i_filemin, i_filemax = 0, np.iinfo(np.int32).max
 
 ## range of data to be shown
-rhocut = 0.5*R
+rhocut = 1.5*R
 zcuthigh = 3*a0
 zcutlow = -2*a0
+xpycuthigh = 0*a0 
+xpycutlow = -R
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 sdata_inside1 = [] 
 sdata_inside2 = [] 
 i_file = i_filemin 
-while os.path.isfile(datadir+"%s_atoms_s_%s_T1_R%d_%04d.npy"%(\
+while os.path.isfile(datadir+"%s_atoms_s_%s_T1_R%d_%04d_combined.npy"%(\
         sample, looptype, R, i_file)) and i_file <= i_filemax:
-    sdata = np.load(datadir+"%s_atoms_s_%s_T1_R%d_%04d.npy"%(\
+    sdata = np.load(datadir+"%s_atoms_s_%s_T1_R%d_%04d_combined.npy"%(\
             sample, looptype, R, i_file))
     sdata = np.vstack((sdata, -sdata))
     counter = 0
     for line in sdata:
+        if not xpycutlow <= line[0]+line[1]+line[3]+line[4] <= xpycuthigh:
+            continue
         if np.linalg.norm(line[0:2])<=rhocut and 0.<line[2]<=zcuthigh:
             sdata_inside1.append(line) ## lattice above z=0
             #print np.einsum('ij,j', rot.T, line[0:3]/a0)
@@ -60,19 +63,25 @@ ax.scatter(sdata_inside2[0]+sdata_inside2[3], \
 if looptype == 'int':
     ## atoms inside loop
     loopatoms = []
-    for x_p in np.arange(-np.ceil(2.*R/a1), np.ceil(2.*R/a1)):
-        for y_p in np.arange(-np.ceil(2.*R/a1), np.ceil(2.*R/a1)):
-            r = x_p*ex_p + y_p*ey_p
-            if np.linalg.norm(r) <= R:
-                loopatoms.append(r)
+    for xpy in np.arange(-np.ceil(5.*R/a1), np.ceil(5.*R/a1)):
+        for xmy in np.arange(-np.ceil(5.*R/a1), np.ceil(5.*R/a1)):
+            if (xpy+xmy) % 2 == 1:
+                x_p = (xpy+xmy)/2.
+                y_p = (xpy-xmy)/2.
+                r = x_p*ex_p + y_p*ey_p
+                if xpycutlow<=r[0]+r[1]<=xpycuthigh and np.linalg.norm(r) <= min(rhocut, R):
+                    loopatoms.append(r)
 elif looptype == 'vac':
     ## atoms outside of loop
     loopatoms = []
-    for x_p in np.arange(-np.ceil(2.*rhocut/a1), np.ceil(2.*rhocut/a1)):
-        for y_p in np.arange(-np.ceil(2.*rhocut/a1), np.ceil(2.*rhocut/a1)):
-            r = x_p*ex_p + y_p*ey_p
-            if R < np.linalg.norm(r) <= rhocut:
-                loopatoms.append(r)
+    for xpy in np.arange(-np.ceil(4.*rhocut/a1), np.ceil(4.*rhocut/a1)):
+        for xmy in np.arange(-np.ceil(4.*rhocut/a1), np.ceil(4.*rhocut/a1)):
+            if (xpy+xmy) % 2 == 0:
+                x_p = (xpy+xmy)/2.
+                y_p = (xpy-xmy)/2.
+                r = x_p*ex_p + y_p*ey_p
+                if xpycutlow<=r[0]+r[1]<=xpycuthigh and 0 < np.linalg.norm(r) <= rhocut:
+                    loopatoms.append(r)
 
 loopatoms = np.array(loopatoms).T
 if len(loopatoms) > 0:
@@ -89,4 +98,7 @@ max_range = max(xmax-xmin, ymax-ymin, zmax-zmin)
 ax.set_xlim(xmid-max_range/2., xmid+max_range/2.)
 ax.set_ylim(ymid-max_range/2., ymid+max_range/2.)
 ax.set_zlim(zmid-max_range/2., zmid+max_range/2.)
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+ax.set_zlabel("z")
 plt.show()

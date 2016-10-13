@@ -1,12 +1,12 @@
 '''
 This script generates the positions of atoms that we wish to calculate
-It is a list of (x/R,y/R,z/R) values
+It is a list of (x,y,z) values
 '''
 import numpy as np
 import os, sys
 
 sample = sys.argv[1] 
-looptype = 'vac'
+looptype = 'int'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
@@ -63,15 +63,15 @@ for z_p in np.arange(np.ceil(-zmax/a2), np.floor(zmax/a2)+1):
         for y_p in np.arange(np.ceil(np.min(_ylims)), \
                                  np.floor(np.max(_ylims))+1):
             if looptype == 'vac':
-                xyz = ((x_p+x0)*ex_p + (y_p+y0)*ey_p + z_p*ez_p)/R
+                xyz = (x_p+x0)*ex_p + (y_p+y0)*ey_p + z_p*ez_p
             elif looptype == 'int':
-                xyz = ((x_p+x0)*ex_p + (y_p+y0)*ey_p + (z_p+0.5)*ez_p)/R
+                xyz = (x_p+x0)*ex_p + (y_p+y0)*ey_p + (z_p+0.5)*ez_p
 
             xyz_list.append(xyz)
 
-xyz_list_orig = set(tuple(xyz) for xyz in xyz_list_orig)
-xyz_list = set(tuple(xyz) for xyz in xyz_list)
-xyz_list = np.array(list(xyz_list - xyz_list_orig))
+#xyz_list_orig = set(tuple(xyz) for xyz in xyz_list_orig)
+#xyz_list = set(tuple(xyz) for xyz in xyz_list)
+#xyz_list = np.array(list(xyz_list - xyz_list_orig))
 
 nproc = raw_input("Total length %d, number of processors? "%len(xyz_list))
 nproc = int(nproc)
