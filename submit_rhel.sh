@@ -1,7 +1,7 @@
-#BSUB -W 24:00 
-#BSUB -n 750 
-#BSUB -e %J.err
-#BSUB -o %J.out
+#BSUB -W 1:00 
+#BSUB -n 743 
 #BSUB -q bulletmpi-large 
 
-mpiexec -np 750 python atoms_amplitude_poly.py
+#/opt/lsf-openmpi/1.8.1/bin//mpirun -np 743 python atoms_amplitude_poly.py
+#/opt/lsf-openmpi/1.8.1/bin//mpirun -np 743 python test.py
+mpirun -np 743 python test.py
