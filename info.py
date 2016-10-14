@@ -1,4 +1,7 @@
-plot_dir = "/Users/phsun/theory/plots/"
+basedir = "/scratch/users/phsun/W/"
 
-MAXTIER = 1 
-NFILES = 8192 # note: this is only max
+preproc_dir = basedir+"preproc/"
+plot_dir = basedir+"plots/"
+
+MAXTIER = 3 
+NFILES = 2048 # note: this is only max

@@ -6,7 +6,7 @@ from scipy.integrate import dblquad
 import sys, os
 from datetime import datetime
 from getopt import getopt
-from info import *
+from info import MAXTIER, basedir, preproc_dir 
 from displacement_iso import disp 
 import time
 
@@ -26,14 +26,14 @@ elif sample == 'Cu':
 elif sample == 'W':
     from W_parameters import *
 
-datadir = "%s_R%d/" % (sample, R)
+datadir = basedir+"%s_R%d/" % (sample, R)
 
 # get uncalculated files
 filelist = []
 for looptype in looptypes:
     for tier in range(1, MAXTIER+1):
         for i_file in xrange(NFILES):
-            if True or os.path.isfile("preproc/%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
+            if True or os.path.isfile(preproc_dir+"%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
                sample, looptype, tier, i_file)) and not os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file)):
                 filelist.append([looptype, tier, i_file])
 if do_debug:
@@ -49,7 +49,7 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
     if i_i_file % nprocs != rank:
         continue
 
-    xyz_list = np.load("preproc/%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
+    xyz_list = np.load(preproc_dir+"%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
                             sample, looptype, tier, i_file))
     data = []
     for i_xyz, xyz in enumerate(xyz_list):

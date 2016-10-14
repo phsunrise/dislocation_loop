@@ -6,10 +6,10 @@ above, where f is the factor of the atom that needs to be considered
 import numpy as np
 import matplotlib.pyplot as plt
 import os, sys
-from info import *
+from info import NFILES, preproc_dir, plot_dir, MAXTIER 
 
 do_save = True 
-tiers = [1]
+tiers = [1, 2, 3]
 
 size = 2**7 # a multiple of 2
 
@@ -23,14 +23,14 @@ elif sample == 'W':
     from W_parameters import *
 
 ## first check if the preproc folder exists
-if not os.path.isdir("preproc/"):
-    print "Creating folder preproc/ ..."
-    os.system("mkdir preproc")
+if not os.path.isdir(preproc_dir):
+    print "Creating folder %s ..."%preproc_dir
+    os.system("mkdir %s"%preproc_dir)
 
 if 1 in tiers:
     ## Tier 1: single atoms
     ## first calculate size of each file
-    totallen1 = (size-1)*(size*2-1)**2/2 #+ (8*size-1)**2/2 # second term is the plane of half atoms
+    totallen1 = (size-1)*(size*2-1)**2/2 + (8*size-1)**2/2 # second term is the plane of half atoms
     sublistlen1 = int(np.ceil(totallen1*1./NFILES))
     xyz_list1 = []
     counter1 = 0
@@ -57,15 +57,15 @@ if 1 in tiers:
                         f = f/2.
                     if abs(xmy) == size-1:
                         f = f/2.
-                    if z_p == 1:
-                        f += 0.5 # add back the half atoms on bottom plane
+                    #if z_p == 1:
+                    #    f += 0.5 # add back the half atoms on bottom plane
 
                     xyz_list1.append(np.append(xyz, f))
                     counter1 += 1
 
                     if do_save:
                         if counter1 == sublistlen1:
-                            np.save("preproc/%s_atoms_s_%s_pre_T1_%04d.npy"%(\
+                            np.save(preproc_dir+"%s_atoms_s_%s_pre_T1_%04d.npy"%(\
                                 sample, looptype, i_file1), xyz_list1)
                             print "saved file %d, list length = %d" % (\
                                     i_file1, len(xyz_list1))
@@ -73,38 +73,38 @@ if 1 in tiers:
                             counter1 = 0
                             i_file1 += 1
 
-    ## the plane of half atoms at bottom, up to MAXTIER
-    #z_p = 1 
-    #f = 0.5 # factor of atom that needs to be considered
-    #for xpy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
-    #    for xmy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
-    #        '''
-    #        since z_p is odd, we have plane B, which has an atom at x=y=1/2
-    #        '''
-    #        if (xpy+xmy+z_p) % 2 == 0:
-    #            x_p = (xpy+xmy)/2.
-    #            y_p = (xpy-xmy)/2.
-    #            if looptype == 'vac':
-    #                xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
-    #            elif looptype == 'int':
-    #                xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
+    # the plane of half atoms at bottom, up to MAXTIER
+    z_p = 1 
+    f = 0.5 # factor of atom that needs to be considered
+    for xpy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
+        for xmy in np.arange(-2**(MAXTIER-1)*size+1, 2**(MAXTIER-1)*size):
+            '''
+            since z_p is odd, we have plane B, which has an atom at x=y=1/2
+            '''
+            if (xpy+xmy+z_p) % 2 == 0:
+                x_p = (xpy+xmy)/2.
+                y_p = (xpy-xmy)/2.
+                if looptype == 'vac':
+                    xyz = x_p*ex_p + y_p*ey_p + z_p*ez_p
+                elif looptype == 'int':
+                    xyz = (x_p-0.25)*ex_p + (y_p-0.25)*ey_p + (z_p-0.5)*ez_p
 
-    #            xyz_list1.append(np.append(xyz, f))
-    #            counter1 += 1
+                xyz_list1.append(np.append(xyz, f))
+                counter1 += 1
 
-    #            if do_save:
-    #                if counter1 == sublistlen1:
-    #                    np.save("preproc/%s_atoms_s_%s_pre_T1_%04d.npy"%(\
-    #                        sample, looptype, i_file1), xyz_list1)
-    #                    print "saved file %d, list length = %d" % (\
-    #                            i_file1, len(xyz_list1))
-    #                    xyz_list1 = []
-    #                    counter1 = 0
-    #                    i_file1 += 1
+                if do_save:
+                    if counter1 == sublistlen1:
+                        np.save(preproc_dir+"%s_atoms_s_%s_pre_T1_%04d.npy"%(\
+                            sample, looptype, i_file1), xyz_list1)
+                        print "saved file %d, list length = %d" % (\
+                                i_file1, len(xyz_list1))
+                        xyz_list1 = []
+                        counter1 = 0
+                        i_file1 += 1
 
     if do_save:
         if len(xyz_list1) > 0:
-            np.save("preproc/%s_atoms_s_%s_pre_T1_%04d.npy"%(\
+            np.save(preproc_dir+"%s_atoms_s_%s_pre_T1_%04d.npy"%(\
                 sample, looptype, i_file1), xyz_list1)
             print "saved file %d, list length = %d" % (\
                     i_file1, len(xyz_list1))
@@ -135,7 +135,7 @@ if 2 in tiers:
 
                 if do_save:
                     if counter2 == sublistlen2:
-                        np.save("preproc/%s_atoms_s_%s_pre_T2_%04d.npy"%(\
+                        np.save(preproc_dir+"%s_atoms_s_%s_pre_T2_%04d.npy"%(\
                             sample, looptype, i_file2), xyz_list2)
                         print "saved file %d, list length = %d" % (\
                                 i_file2, len(xyz_list2))
@@ -145,7 +145,7 @@ if 2 in tiers:
 
     if do_save:
         if len(xyz_list2) > 0:
-            np.save("preproc/%s_atoms_s_%s_pre_T2_%04d.npy"%(\
+            np.save(preproc_dir+"%s_atoms_s_%s_pre_T2_%04d.npy"%(\
                 sample, looptype, i_file2), xyz_list2)
             print "saved file %d, list length = %d" % (\
                     i_file2, len(xyz_list2))
@@ -176,7 +176,7 @@ if 3 in tiers:
 
                 if do_save:
                     if counter3 == sublistlen3:
-                        np.save("preproc/%s_atoms_s_%s_pre_T3_%04d.npy"%(\
+                        np.save(preproc_dir+"%s_atoms_s_%s_pre_T3_%04d.npy"%(\
                             sample, looptype, i_file3), xyz_list3)
                         print "saved file %d, list length = %d" % (\
                                 i_file3, len(xyz_list3))
@@ -186,7 +186,7 @@ if 3 in tiers:
 
     if do_save:
         if len(xyz_list3) > 0:
-            np.save("preproc/%s_atoms_s_%s_pre_T3_%04d.npy"%(\
+            np.save(preproc_dir+"%s_atoms_s_%s_pre_T3_%04d.npy"%(\
                 sample, looptype, i_file3), xyz_list3)
             print "saved file %d, list length = %d" % (\
                     i_file3, len(xyz_list3))
@@ -217,7 +217,7 @@ if 4 in tiers:
 
                 if do_save:
                     if counter4 == sublistlen4:
-                        np.save("preproc/%s_atoms_s_%s_pre_T4_%04d.npy"%(\
+                        np.save(preproc_dir+"%s_atoms_s_%s_pre_T4_%04d.npy"%(\
                             sample, looptype, i_file4), xyz_list4)
                         print "saved file %d, list length = %d" % (\
                                 i_file4, len(xyz_list4))
@@ -227,7 +227,7 @@ if 4 in tiers:
 
     if do_save:
         if len(xyz_list4) > 0:
-            np.save("preproc/%s_atoms_s_%s_pre_T4_%04d.npy"%(\
+            np.save(preproc_dir+"%s_atoms_s_%s_pre_T4_%04d.npy"%(\
                 sample, looptype, i_file4), xyz_list4)
             print "saved file %d, list length = %d" % (\
                     i_file4, len(xyz_list4))
@@ -258,7 +258,7 @@ if 5 in tiers:
 
                 if do_save:
                     if counter5 == sublistlen5:
-                        np.save("preproc/%s_atoms_s_%s_pre_T5_%04d.npy"%(\
+                        np.save(preproc_dir+"%s_atoms_s_%s_pre_T5_%04d.npy"%(\
                             sample, looptype, i_file5), xyz_list5)
                         print "saved file %d, list length = %d" % (\
                                 i_file5, len(xyz_list5))
@@ -268,7 +268,7 @@ if 5 in tiers:
 
     if do_save:
         if len(xyz_list5) > 0:
-            np.save("preproc/%s_atoms_s_%s_pre_T5_%04d.npy"%(\
+            np.save(preproc_dir+"%s_atoms_s_%s_pre_T5_%04d.npy"%(\
                 sample, looptype, i_file5), xyz_list5)
             print "saved file %d, list length = %d" % (\
                     i_file5, len(xyz_list5))
