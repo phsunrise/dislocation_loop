@@ -6,7 +6,8 @@ above, where f is the factor of the atom that needs to be considered
 import numpy as np
 import matplotlib.pyplot as plt
 import os, sys
-from info import NFILES, preproc_dir, plot_dir, MAXTIER 
+from info import NFILES, MAXTIER 
+from settings import preproc_dir, plot_dir
 
 do_save = True 
 tiers = [1, 2, 3]

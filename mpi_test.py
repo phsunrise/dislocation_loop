@@ -4,5 +4,5 @@ rank = comm.Get_rank()
 nprocs = comm.Get_size()
 
 print rank, nprocs
-with open("%d.out"%rank, 'w') as f:
+with open("test/%d.out"%rank, 'w') as f:
     f.write(str(rank)+' '+str(nprocs)+'\n')
