@@ -35,7 +35,7 @@ def disp(b, x, y, z, R, C12, C44):
     R1 = np.sqrt(z**2+(r-R)**2)
     E = special.ellipe(-4.*R*r/R1**2)
     K = special.ellipk(-4.*R*r/R1**2)
-    print "E=%f, K=%f, nu=%f" % (E, K, nu)
+    #print "E=%f, K=%f, nu=%f" % (E, K, nu)
     # first term, containing the solid angle
     term1 = -b/(4.*np.pi)*solang(x,y,z,R)
 
@@ -91,11 +91,11 @@ def disp(b, x, y, z, R, C12, C44):
                     y**2) + z**2))
     term3 /= (8.*np.pi*(1.-nu))
 
-    print "B =", b
-    print "term1 =", term1
-    print "term2 =", term2
-    print "term3 =", term3
-    print "term3*(8pi(1-nu)) =", term3*(8.*np.pi*(1.-nu))
+    #print "B =", b
+    #print "term1 =", term1
+    #print "term2 =", term2
+    #print "term3 =", term3
+    #print "term3*(8pi(1-nu)) =", term3*(8.*np.pi*(1.-nu))
     #print (term1+term2+term3)/a0
     return term1-term2-term3
     

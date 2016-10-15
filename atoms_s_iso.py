@@ -6,9 +6,9 @@ from scipy.integrate import dblquad
 import sys, os
 from datetime import datetime
 from getopt import getopt
-from info import MAXTIER, basedir, preproc_dir 
+from info import MAXTIER, NFILES
+from settings import basedir, preproc_dir 
 from displacement_iso import disp 
-import time
 
 do_debug = False
 
@@ -27,13 +27,16 @@ elif sample == 'W':
     from W_parameters import *
 
 datadir = basedir+"%s_R%d/" % (sample, R)
+if not os.path.isdir(datadir):
+    print "creating directory %s ..."%datadir
+    os.system("mkdir %s"%datadir)
 
 # get uncalculated files
 filelist = []
 for looptype in looptypes:
     for tier in range(1, MAXTIER+1):
         for i_file in xrange(NFILES):
-            if True or os.path.isfile(preproc_dir+"%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
+            if os.path.isfile(preproc_dir+"%s_atoms_s_%s_pre_T%d_%04d.npy"%(\
                sample, looptype, tier, i_file)) and not os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file)):
                 filelist.append([looptype, tier, i_file])
 if do_debug:
@@ -99,11 +102,13 @@ for i_i_file, [looptype, tier, i_file] in enumerate(filelist):
         else:
             data.append([xyz[0], xyz[1], xyz[2], s[0], s[1], s[2]])
         
-        if i_xyz % 10 == 0:
-            print "done %s, tier %d, file %04d, entry %04d, at %s" % (\
-                        looptype, tier, i_file, i_xyz, datetime.now())
+        #if i_xyz % 10 == 0:
+        #    print "done %s, tier %d, file %04d, entry %04d, at %s" % (\
+        #                looptype, tier, i_file, i_xyz, datetime.now())
 
     data = np.array(data)
     if looptype == 'int':
         data[:,3:6] = -data[:,3:6]
     np.save(datadir+"%s_atoms_s_%s_T%d_R%d_%04d.npy"%(sample, looptype, tier, R, i_file), data)
+    print "done %s, tier %d, file %04d, at %s" % (\
+                looptype, tier, i_file, datetime.now())
