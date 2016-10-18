@@ -36,7 +36,7 @@ if __name__ == '__main__':
         while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(\
                   sample, looptype, tier, R, i_file)):
             if not os.path.isfile(\
-                  datadir+"%s_atoms_amplitude1_%s_T%d_R%d_ori%d_%04d.npy"%(\
+                  datadir+"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
                     sample, looptype, tier, R, i_ori, i_file)):
                 filelist.append([looptype, tier, i_ori, ori, i_file])
             i_file += 1
