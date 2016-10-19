@@ -3,7 +3,7 @@ import numpy as np
 crystaltype = 'BCC'
 
 a0 = 3.160 # Angstrom
-R = 10.
+R = 5.
 D = 4.*R
 Vc = 15.78
 
@@ -28,7 +28,6 @@ C44 = 1.6072
 d = C11 - C12 - 2.*C44
 
 h = 2.*np.pi/a0 * np.array([2.,2.,0.])
-hnorm = np.linalg.norm(h)
 eq = np.array([1.,1.,0.])
 eq = eq / np.linalg.norm(eq)
 
