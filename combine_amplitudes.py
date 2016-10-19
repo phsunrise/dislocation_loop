@@ -1,6 +1,7 @@
 import numpy as np
 import sys, os
-from info import *
+from info import MAXTIER 
+from settings import basedir
 
 sample = 'W'
 looptypes = ['int', 'vac']
@@ -10,7 +11,7 @@ elif sample == 'Cu':
     from Cu_parameters import *
 elif sample == 'W':
     from W_parameters import *
-datadir = "%s_R%d/" % (sample, R)
+datadir = basedir+"%s_R%d/"%(sample, R)
 
 
 _list = [(looptype, tier, i_ori, ori) for looptype in looptypes for tier in range(1, MAXTIER+1) \
