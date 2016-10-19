@@ -80,7 +80,7 @@ for i_R, R in enumerate([20.]):
         #    label=r"$R=%d\mathrm{\AA}$, %s"%(R, looptype))
         #ax.plot(q_array, intensities1*abs(q_array)**4/R**2, color='b', ls=linestyle)
         #ax.plot(q_array, intensities2*abs(q_array)**4/R**2, color='g', ls=linestyle)
-        np.save(datadir+"%s_atoms_intensity_poly_R%d.npy"%(sample, R), intensities)
+        np.save(datadir+"%s_atoms_intensity_poly_%s_R%d.npy"%(sample, looptype, R), intensities)
         #np.save(datadir+"%s_atoms_intensity1_poly_R%d.npy"%(sample, R), intensities1)
         #np.save(datadir+"%s_atoms_intensity2_poly_R%d.npy"%(sample, R), intensities2)
 

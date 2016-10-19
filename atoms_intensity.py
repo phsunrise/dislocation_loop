@@ -12,7 +12,7 @@ colors = ['r', 'b', 'g']
 fig = plt.figure(figsize=(12,6))
 ax = fig.add_subplot(1, 1, 1)
 
-for i_R, R in enumerate([10., 20., 40.]):
+for i_R, R in enumerate([20.]):
     print "sample:", sample
     print "R=%.1f"%(R)
     datadir = basedir+"%s_R%d/"%(sample, R)
@@ -84,9 +84,9 @@ for i_R, R in enumerate([10., 20., 40.]):
         #    label=r"$R=%d\mathrm{\AA}$, %s"%(R, looptype))
         #ax.plot(q_array, intensities1*abs(q_array)**4/R**2, color='b', ls=linestyle)
         #ax.plot(q_array, intensities2*abs(q_array)**4/R**2, color='g', ls=linestyle)
-        np.save(datadir+"%s_atoms_intensity_R%d.npy"%(sample, R), intensities)
-        np.save(datadir+"%s_atoms_intensity1_R%d.npy"%(sample, R), intensities1)
-        np.save(datadir+"%s_atoms_intensity2_R%d.npy"%(sample, R), intensities2)
+        np.save(datadir+"%s_atoms_intensity_%s_R%d.npy"%(sample, looptype, R), intensities)
+        np.save(datadir+"%s_atoms_intensity1_%s_R%d.npy"%(sample, looptype, R), intensities1)
+        np.save(datadir+"%s_atoms_intensity2_%s_R%d.npy"%(sample, looptype, R), intensities2)
 
 ax.set_xlim(-0.5, 0.5)
 #ax.set_ylim(0., 20.)
