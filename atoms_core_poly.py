@@ -2,6 +2,7 @@ import numpy as np
 import sys, os
 from settings import basedir
 from getopt import getopt
+import time
 
 do_debug = False
 do_mpi = True # when -n and -p commands are supplied, will do "fake mpi"
@@ -33,7 +34,7 @@ q_array = np.load(datadir+"q_array.npy")
 # get uniform distributed points on sphere
 sph_array = np.load("uniformsphere.npy")
 
-_list = [(looptype, i_ori, ori) for looptype in looptypes\ 
+_list = [(looptype, i_ori, ori) for looptype in looptypes \
                         for i_ori, ori in enumerate(orientations)]
 for _i_list, (looptype, i_ori, ori) in enumerate(_list):
     if _i_list % nprocs != rank:
@@ -41,6 +42,7 @@ for _i_list, (looptype, i_ori, ori) in enumerate(_list):
     print "starting looptype %s, orientation %d..." % (looptype, i_ori)
     amplitudes = [] 
     for i_qval, qval in enumerate(q_array):
+        time_start = time.time()
         q = qval * np.einsum('ij,j', ori, eq)
         K = np.einsum('ij,j', ori, h) + q
         Knorm = np.linalg.norm(K) 
@@ -65,6 +67,10 @@ for _i_list, (looptype, i_ori, ori) in enumerate(_list):
                             amplitude -= np.exp(\
                                 -0.5*r.dot(r)/D**2)*np.cos(Kloop.dot(r))
             amplitudes[-1].append(amplitude)
+        time_end = time.time()
+        print "done q=%f, used time %f s" % (qval, time_end-time_start)
+        if do_debug and i_qval == 5:
+            sys.exit(0)
 
     np.save(datadir+"%s_atoms_core_poly_%s_R%d_ori%d.npy"%(\
                 sample, looptype, R, i_ori), amplitudes)
