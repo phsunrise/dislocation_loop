@@ -1,9 +1,8 @@
 import numpy as np
 from info import MAXTIER
 from settings import basedir
+from W_parameters import R
 
-
-R = 20.
 datadir = basedir + "W_R%d/"%(R)
 
 n = 64 # number of subfiles to combine

@@ -15,8 +15,7 @@ elif sample == 'W':
 
 datadir = basedir + "%s_R%d/"%(sample, R)
 q_array = np.linspace(-1.0, 1.0, 201)
-
-D = 4.*R ## parameter in gaussian used to smooth out the boundary
+np.save(datadir+"q_array.npy", q_array)
 
 if __name__ == '__main__':
     from getopt import getopt
