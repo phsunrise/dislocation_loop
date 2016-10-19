@@ -36,6 +36,8 @@ sph_array = np.load("uniformsphere.npy")
 _list = [(looptype, i_ori, ori) for looptype in looptypes\ 
                         for i_ori, ori in enumerate(orientations)]
 for _i_list, (looptype, i_ori, ori) in enumerate(_list):
+    if _i_list % nprocs != rank:
+        continue
     print "starting looptype %s, orientation %d..." % (looptype, i_ori)
     amplitudes = [] 
     for i_qval, qval in enumerate(q_array):

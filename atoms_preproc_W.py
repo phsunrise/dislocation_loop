@@ -15,7 +15,7 @@ tiers = [1, 2, 3]
 size = 2**7 # a multiple of 2
 
 sample = 'W' 
-looptype = 'int'
+looptype = 'vac'
 if sample == 'Al':
     from Al_parameters import *
 elif sample == 'Cu':
