@@ -76,7 +76,7 @@ for i_R, R in enumerate([20.]):
             linestyle = '--'
         elif looptype == 'int':
             linestyle = '-'
-        ax.plot(q_array, intensities*abs(q_array)**6/R**0, \
+        ax.plot(q_array, intensities*abs(q_array)**4/R**2, \
             color=colors[i_R], ls=linestyle, \
             label=r"$R=%d\mathrm{\AA}$, %s"%(R, looptype))
         #ax.plot(q_array, intensities/R**6, \
