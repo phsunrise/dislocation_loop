@@ -13,7 +13,6 @@ elif sample == 'Cu':
 elif sample == 'W':
     from W_parameters import *
 
-R = 20.
 datadir = basedir + "%s_R%d/"%(sample, R)
 
 # see if q_array exists
