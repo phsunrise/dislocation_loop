@@ -3,7 +3,7 @@ import numpy as np
 crystaltype = 'BCC'
 
 a0 = 3.160 # Angstrom
-R = 5.
+R = 20. 
 D = 4.*R
 Vc = 15.78
 
