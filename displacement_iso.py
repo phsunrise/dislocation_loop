@@ -25,7 +25,7 @@ def solang(x, y, z, R):
         return 2.*np.pi-2.*z/Rmax*special.ellipk(k) - np.pi*gamma0
     elif r == R:
         return np.pi - 2.*z/Rmax*special.ellipk(k)
-    else: # r0 > R
+    else: # r > R
         return -2.*z/Rmax*special.ellipk(k) + np.pi*gamma0
 
 def disp(b, x, y, z, R, C12, C44):
