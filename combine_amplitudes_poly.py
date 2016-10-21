@@ -11,7 +11,6 @@ elif sample == 'Cu':
     from Cu_parameters import *
 elif sample == 'W':
     from W_parameters import *
-R = 20.
 datadir = basedir+"%s_R%d/"%(sample, R)
 
 

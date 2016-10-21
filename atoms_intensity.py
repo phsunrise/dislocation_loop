@@ -7,12 +7,12 @@ from formfactor import formfactor
 sample = 'W'
 from W_parameters import *
 looptypes = ['vac', 'int']
-colors = ['r', 'b', 'g']
+colors = ['r', 'b', 'g', 'c']
 
 fig = plt.figure(figsize=(12,6))
 ax = fig.add_subplot(1, 1, 1)
 
-for i_R, R in enumerate([20.]):
+for i_R, R in enumerate([40.]):
     print "sample:", sample
     print "R=%.1f"%(R)
     datadir = basedir+"%s_R%d/"%(sample, R)
@@ -88,11 +88,14 @@ for i_R, R in enumerate([20.]):
         np.save(datadir+"%s_atoms_intensity1_%s_R%d.npy"%(sample, looptype, R), intensities1)
         np.save(datadir+"%s_atoms_intensity2_%s_R%d.npy"%(sample, looptype, R), intensities2)
 
-ax.set_xlim(-0.5, 0.5)
-#ax.set_ylim(0., 20.)
+ax.set_xlim(-1.0, 1.0)
+ax.set_ylim(0., 20.)
 ax.set_xlabel(r"$q$ (220)")
 ax.set_ylabel(r"$q^4/R^2 I$")
-ax.legend(loc='upper right')
+
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05), ncol=4, \
+          fancybox=True, shadow=True)
+
 plt.tight_layout()
 fig.savefig("intensity_%s.pdf"%sample)
 plt.show()

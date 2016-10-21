@@ -61,10 +61,10 @@ if __name__ == '__main__':
     if do_debug:
         print filelist
         print "%d files" % len(filelist)
-        sys.exit(0)
 
-    # get uniform distributed points on sphere
+    # get uniform distributed points on sphere, save it in data folder
     sph_array = np.load("uniformsphere.npy")
+    os.system("cp uniformsphere.npy %s"%(datadir))
 
     for i_i_file, [looptype, tier, i_ori, ori, i_file] in enumerate(filelist):
         ## here is the parallelism criterion
@@ -111,8 +111,8 @@ if __name__ == '__main__':
 
             time_end = time.time()
             print "used time %f for q=%f" % (time_end-time_start, qval)
-            #if i_qval == 5:
-            #    sys.exit(0)
+            if do_debug and i_qval == 5:
+                sys.exit(0)
 
         # save data
         np.save(datadir+"%s_atoms_amplitude_poly_%s_T%d_R%d_ori%d_%04d.npy"%(\

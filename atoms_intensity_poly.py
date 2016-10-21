@@ -16,7 +16,7 @@ sph_array = np.load("uniformsphere.npy")
 fig = plt.figure(figsize=(12,6))
 ax = fig.add_subplot(1, 1, 1)
 
-for i_R, R in enumerate([20.]):
+for i_R, R in enumerate([20., 40.]):
     print "sample:", sample
     print "R=%.1f"%(R)
     datadir = basedir+"%s_R%d/"%(sample, R)
@@ -72,20 +72,20 @@ for i_R, R in enumerate([20.]):
             linestyle = '--'
         elif looptype == 'int':
             linestyle = '-'
-        ax.plot(q_array, intensities*abs(q_array)**1.5/R**2, \
-            color=colors[i_R], ls=linestyle, \
-            label=r"$R=%d\mathrm{\AA}$, %s"%(R, looptype))
-        #ax.plot(q_array, intensities/R**6, \
+        #ax.plot(q_array, intensities*abs(q_array)**1.5/R**2, \
         #    color=colors[i_R], ls=linestyle, \
         #    label=r"$R=%d\mathrm{\AA}$, %s"%(R, looptype))
+        ax.plot(q_array, intensities, \
+            color=colors[i_R], ls=linestyle, \
+            label=r"$R=%d\mathrm{\AA}$, %s"%(R, looptype))
         #ax.plot(q_array, intensities1*abs(q_array)**4/R**2, color='b', ls=linestyle)
         #ax.plot(q_array, intensities2*abs(q_array)**4/R**2, color='g', ls=linestyle)
         np.save(datadir+"%s_atoms_intensity_poly_%s_R%d.npy"%(sample, looptype, R), intensities)
         #np.save(datadir+"%s_atoms_intensity1_poly_R%d.npy"%(sample, R), intensities1)
         #np.save(datadir+"%s_atoms_intensity2_poly_R%d.npy"%(sample, R), intensities2)
 
-ax.set_xlim(-0.3, 0.3)
-ax.set_ylim(0., 0.4)
+ax.set_xlim(-1.0, 1.0)
+#ax.set_ylim(0., 0.4)
 ax.set_xlabel(r"$q$ (220)")
 ax.set_ylabel(r"$|q|^{1.5}/R^2 I$")
 ax.legend(loc='upper right')
