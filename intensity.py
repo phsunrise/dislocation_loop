@@ -6,13 +6,13 @@ from formfactor import formfactor
 
 sample = 'W'
 from W_parameters import *
-looptypes = ['vac', 'int']
+looptypes = ['int', 'vac']
 colors = ['r', 'b', 'g', 'c']
 
 fig = plt.figure(figsize=(12,6))
 ax = fig.add_subplot(1, 1, 1)
 
-for i_R, R in enumerate([40.]):
+for i_R, R in enumerate([20.]):
     print "sample:", sample
     print "R=%.1f"%(R)
     datadir = basedir+"%s_R%d/"%(sample, R)
@@ -21,8 +21,6 @@ for i_R, R in enumerate([40.]):
     for looptype in looptypes:
         print "starting looptype %s..." % looptype
         intensities = [] 
-        intensities1 = []
-        intensities2 = []
         for i_ori, ori in enumerate(orientations):
             print "starting orientation %d..." % i_ori
 
@@ -37,39 +35,24 @@ for i_R, R in enumerate([40.]):
             ff_tier2 = np.array(ff_tier2)
             ff_tier3 = np.array(ff_tier3)
 
-
             amplitudes = np.load(datadir+"%s_atoms_core_%s_R%d_ori%d.npy"%(\
                                     sample, looptype, R, i_ori)) 
-            amplitudes1 = np.copy(amplitudes)
-            amplitudes2 = np.copy(amplitudes)
+            #amplitudes *= 0
 
             amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_T1_R%d_ori%d_combined.npy"%(\
                                 sample, looptype, R, i_ori))[:,1]*2.
-            amplitudes1[:,1] += np.load(datadir+"%s_atoms_amplitude1_%s_T1_R%d_ori%d_combined.npy"%(\
-                                sample, looptype, R, i_ori))[:,1]*2.
-            amplitudes2[:,1] += np.load(datadir+"%s_atoms_amplitude2_%s_T1_R%d_ori%d_combined.npy"%(\
-                                sample, looptype, R, i_ori))[:,1]*2.
             amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_T2_R%d_ori%d_combined.npy"%(\
-                                sample, looptype, R, i_ori))[:,1]*ff_tier2*2.
-            amplitudes1[:,1] += np.load(datadir+"%s_atoms_amplitude1_%s_T2_R%d_ori%d_combined.npy"%(\
-                                sample, looptype, R, i_ori))[:,1]*ff_tier2*2.
-            amplitudes2[:,1] += np.load(datadir+"%s_atoms_amplitude2_%s_T2_R%d_ori%d_combined.npy"%(\
                                 sample, looptype, R, i_ori))[:,1]*ff_tier2*2.
             amplitudes[:,1] += np.load(datadir+"%s_atoms_amplitude_%s_T3_R%d_ori%d_combined.npy"%(\
                                 sample, looptype, R, i_ori))[:,1]*ff_tier3*2.
-            amplitudes1[:,1] += np.load(datadir+"%s_atoms_amplitude1_%s_T3_R%d_ori%d_combined.npy"%(\
-                                sample, looptype, R, i_ori))[:,1]*ff_tier3*2.
-            amplitudes2[:,1] += np.load(datadir+"%s_atoms_amplitude2_%s_T3_R%d_ori%d_combined.npy"%(\
-                                sample, looptype, R, i_ori))[:,1]*ff_tier3*2.
 
-            intensities.append(amplitudes[:,1]**2)
-            intensities1.append(amplitudes1[:,1]**2)
-            intensities2.append(amplitudes2[:,1]**2)
+            intensities.append(amplitudes[:,1]) ## here only appending amplitudes
 
         # average over all orientations
-        intensities = np.mean(np.array(intensities), axis=0)
-        intensities1 = np.mean(np.array(intensities1), axis=0)
-        intensities2 = np.mean(np.array(intensities2), axis=0)
+        intensities = np.array(intensities)
+        print intensities[:, :5]
+        print intensities[:, -5:]
+        intensities = np.mean(intensities, axis=0)**2 ## here turning amplitude into intensity
 
         # plot q^4/R^2*I 
         if looptype == 'vac':
@@ -82,14 +65,10 @@ for i_R, R in enumerate([40.]):
         #ax.plot(q_array, intensities/R**6, \
         #    color=colors[i_R], ls=linestyle, \
         #    label=r"$R=%d\mathrm{\AA}$, %s"%(R, looptype))
-        #ax.plot(q_array, intensities1*abs(q_array)**4/R**2, color='b', ls=linestyle)
-        #ax.plot(q_array, intensities2*abs(q_array)**4/R**2, color='g', ls=linestyle)
         np.save(datadir+"%s_atoms_intensity_%s_R%d.npy"%(sample, looptype, R), intensities)
-        np.save(datadir+"%s_atoms_intensity1_%s_R%d.npy"%(sample, looptype, R), intensities1)
-        np.save(datadir+"%s_atoms_intensity2_%s_R%d.npy"%(sample, looptype, R), intensities2)
 
 ax.set_xlim(-1.0, 1.0)
-ax.set_ylim(0., 20.)
+#ax.set_ylim(0., 5.)
 ax.set_xlabel(r"$q$ (220)")
 ax.set_ylabel(r"$q^4/R^2 I$")
 

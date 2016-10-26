@@ -27,17 +27,22 @@ C12 = 2.0453
 C44 = 1.6072
 d = C11 - C12 - 2.*C44
 
-h = 2.*np.pi/a0 * np.array([2.,2.,0.])
-eq = np.array([1.,1.,0.])
+h = 2.*np.pi/a0 * np.array([2.,0.,0.])
+eq = np.array([1.,0.,0.])
 eq = eq / np.linalg.norm(eq)
 
 ## four possibilities for loop orientations
 ## in order to accelerate the calculation, we rotate h and eq,
 ## but not ex, ey, ez, so that the s field results can still be used
-orientations = [np.diag([1.,1.,1.]),
-                np.diag([1.,-1.,-1.]),
-                np.diag([-1.,1.,-1.]),
-                np.diag([-1.,-1.,1.])]
+orientations_pm = [np.diag([1.,1.,1.]),
+                   np.diag([1.,-1.,-1.]),
+                   np.diag([-1.,1.,-1.]),
+                   np.diag([-1.,-1.,1.])]
+orientations_perm = [np.diag([1.,1.,1.]),
+                     np.array([[0.,1.,0.],[0.,0.,1.],[1.,0.,0.]]),
+                     np.array([[0.,0.,1.],[1.,0.,0.],[0.,1.,0.]])]
+orientations = [np.dot(mat1, mat2) for mat1 in orientations_pm \
+                        for mat2 in orientations_perm]
 
 ## P tensor
 P = np.zeros((3, 3))

@@ -3,6 +3,8 @@ import sys, os
 from info import MAXTIER, NFILES 
 from settings import basedir
 import time
+from getopt import getopt
+import pickle
 
 sample = 'W'
 looptypes = ['int', 'vac']
@@ -20,34 +22,46 @@ np.save(datadir+"q_array.npy", q_array)
 if __name__ == '__main__':
     from getopt import getopt
     do_debug = False
+    do_mpi = True # when -n and -p commands are supplied, will do "fake mpi"
 
-    opts, args = getopt(sys.argv[1:], "d")
+    opts, args = getopt(sys.argv[1:], "dn:p:")
     for o, a in opts:
         if o == '-d':
             do_debug = True
+        elif o == '-n':
+            nprocs = int(a)
+            do_mpi = False
+        elif o == '-p':
+            rank = int(a)
+
+    if do_mpi:
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        nprocs = comm.Get_size()
 
     _list = [(looptype, tier, i_ori, ori) for looptype in looptypes for tier in range(1, MAXTIER+1) 
                             for i_ori, ori in enumerate(orientations)]
+
     # first get list of unprocessed data
-    filelist = []
-    for looptype, tier, i_ori, ori in _list:
-        i_file = 0
-        while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(\
-                  sample, looptype, tier, R, i_file)):
-            if not os.path.isfile(\
-                  datadir+"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
-                    sample, looptype, tier, R, i_ori, i_file)):
-                filelist.append([looptype, tier, i_ori, ori, i_file])
-            i_file += 1
     if do_debug:
+        filelist = []
+        for looptype, tier, i_ori, ori in _list:
+            i_file = 0
+            while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(\
+                      sample, looptype, tier, R, i_file)):
+                if not os.path.isfile(\
+                      datadir+"%s_atoms_amplitude_%s_T%d_R%d_ori%d_%04d.npy"%(\
+                        sample, looptype, tier, R, i_ori, i_file)):
+                    filelist.append([looptype, tier, i_ori, ori, i_file])
+                i_file += 1
         print filelist
         print "total %d files" % len(filelist)
+        with open("amplitude_filelist.pickle", 'wb') as fout:
+            pickle.dump(filelist, fout)
         sys.exit(0)
-
-    from mpi4py import MPI
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    nprocs = comm.Get_size()
+    else:
+        filelist = pickle.load(open("amplitude_filelist.pickle", 'rb'))
 
     for i_i_file, [looptype, tier, i_ori, ori, i_file] in enumerate(filelist):
         ## here is the parallelism criterion
@@ -65,6 +79,7 @@ if __name__ == '__main__':
             q = qval * np.einsum('ij,j', ori, eq)
             qloop = np.einsum('ij,j', rot, q)
             K = np.einsum('ij,j', ori, h) + q
+            hloop = np.einsum('ij,jk,k', rot, ori, h)
             Kloop = np.einsum('ij,j', rot, K)
 
             ''' 
@@ -76,8 +91,11 @@ if __name__ == '__main__':
             r1 = r+s
             qr = r.dot(qloop)
             Ks = s.dot(Kloop)
+            #hs = s.dot(hloop)
             _temp = (np.cos(qr)*(np.cos(Ks)-1.)-\
                 np.sin(qr)*np.sin(Ks))*np.exp(-0.5*np.sum(r1**2, axis=1)/D**2)
+            #_temp = (np.cos(qr)*(np.cos(hs)-1.)-\
+            #    np.sin(qr)*np.sin(hs))*np.exp(-0.5*np.sum(r1**2, axis=1)/D**2)
             if tier == 1:
                 _temp = _temp*sdata[:, 6]
 
