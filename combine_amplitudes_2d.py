@@ -11,7 +11,7 @@ i_dir = 0
 while os.path.isdir(basedir + "%s_R%d_amp2d_%d/"%(sample, R, i_dir)):
     print "folder %s exists, containing %d files" % (\
             basedir+"%s_R%d_amp2d_%d/"%(sample, R, i_dir), \
-            len(glob.glob(basedir+"%s_R%d_amp2d_%d/%s_atoms_amplitude_2d_*_T*_R*_ori*_*.npy"%(\
+            len(glob.glob(basedir+"%s_R%d_amp2d_%d/%s_atoms_amplitude_2d_*_T*_R*_ori*_????.npy"%(\
                 sample, R, i_dir, sample))))
     i_dir += 1
 val = raw_input("enter folder number: ")
