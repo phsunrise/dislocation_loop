@@ -1,6 +1,6 @@
 import os
 
-nprocs = 16 
+nprocs = 32 
 
 ## first generate the filelist
 os.system("python amplitude.py -d")

@@ -3,7 +3,7 @@ import numpy as np
 crystaltype = 'BCC'
 
 a0 = 3.160 # Angstrom
-R = 20. 
+R = 10. 
 D = 4.*R
 Vc = 15.78
 
@@ -34,10 +34,12 @@ eq = eq / np.linalg.norm(eq)
 ## four possibilities for loop orientations
 ## in order to accelerate the calculation, we rotate h and eq,
 ## but not ex, ey, ez, so that the s field results can still be used
-orientations_pm = [np.diag([1.,1.,1.]),
-                   np.diag([1.,-1.,-1.]),
-                   np.diag([-1.,1.,-1.]),
-                   np.diag([-1.,-1.,1.])]
+
+#orientations_pm = [np.diag([1.,1.,1.]),
+#                   np.diag([1.,-1.,-1.]),
+#                   np.diag([-1.,1.,-1.]),
+#                   np.diag([-1.,-1.,1.])]
+orientations_pm = [np.diag([1.,1.,1.])]
 orientations_perm = [np.diag([1.,1.,1.]),
                      np.array([[0.,1.,0.],[0.,0.,1.],[1.,0.,0.]]),
                      np.array([[0.,0.,1.],[1.,0.,0.],[0.,1.,0.]])]

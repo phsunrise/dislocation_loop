@@ -3,6 +3,7 @@ import sys, os
 from info import MAXTIER 
 from settings import basedir
 import time
+import pickle
 
 sample = 'W'
 looptypes = ['int', 'vac']
@@ -48,19 +49,24 @@ if __name__ == '__main__':
     _list = [(looptype, tier, i_ori, ori) for looptype in looptypes for tier in range(1, MAXTIER+1) 
                             for i_ori, ori in enumerate(orientations)]
     # first get list of unprocessed data
-    filelist = []
-    for looptype, tier, i_ori, ori in _list:
-        i_file = 0
-        while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(\
-                  sample, looptype, tier, R, i_file)):
-            if not os.path.isfile(\
-                  datadir+"%s_atoms_amplitude_poly_%s_T%d_R%d_ori%d_%04d.npy"%(\
-                    sample, looptype, tier, R, i_ori, i_file)):
-                filelist.append([looptype, tier, i_ori, ori, i_file])
-            i_file += 1
     if do_debug:
+        filelist = []
+        for looptype, tier, i_ori, ori in _list:
+            i_file = 0
+            while os.path.isfile(datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(\
+                      sample, looptype, tier, R, i_file)):
+                if not os.path.isfile(\
+                      datadir+"%s_atoms_amplitude_poly_%s_T%d_R%d_ori%d_%04d.npy"%(\
+                        sample, looptype, tier, R, i_ori, i_file)):
+                    filelist.append([looptype, tier, i_ori, ori, i_file])
+                i_file += 1
         print filelist
         print "%d files" % len(filelist)
+        with open("amplitude_poly_filelist.pickle", 'wb') as fout:
+            pickle.dump(filelist, fout)
+        sys.exit(0)
+    else:
+        filelist = pickle.load(open("amplitude_poly_filelist.pickle", 'rb'))
 
     # get uniform distributed points on sphere, save it in data folder
     sph_array = np.load("uniformsphere.npy")

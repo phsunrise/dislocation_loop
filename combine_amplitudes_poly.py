@@ -45,10 +45,3 @@ for looptype, tier, i_ori, ori in _list:
     print "done %s, tier %d, orientation %d, total %d files" % (\
                 looptype, tier, i_ori, i_file)
 
-val = raw_input("Delete uncombined files? ")
-if val in ['y', 'Y', 'yes']:
-    for looptype, tier, i_ori, ori in _list:
-        os.system("rm "+datadir+"%s_atoms_amplitude_poly_%s_T%d_R%d_ori%d_????.npy"%(\
-                                sample, looptype, tier, R, i_ori))
-        print "Deleted %s, tier %d, orientation %d, total %d files" % (\
-                    looptype, tier, i_ori, i_file)

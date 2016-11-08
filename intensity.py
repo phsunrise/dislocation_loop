@@ -12,7 +12,7 @@ colors = ['r', 'b', 'g', 'c']
 fig = plt.figure(figsize=(12,6))
 ax = fig.add_subplot(1, 1, 1)
 
-for i_R, R in enumerate([20.]):
+for i_R, R in enumerate([5.]):
     print "sample:", sample
     print "R=%.1f"%(R)
     datadir = basedir+"%s_R%d/"%(sample, R)
