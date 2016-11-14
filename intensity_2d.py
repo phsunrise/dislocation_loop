@@ -59,6 +59,17 @@ for looptype in looptypes:
 
         intensities.append(amplitudes**2)
 
+        ## plot individual orientations 
+        #fig = plt.figure(figsize=(12,6))
+        #ax = fig.add_subplot(1, 1, 1)
+        #img = ax.imshow(intensities, origin='lower', \
+        #                interpolation='nearest', \
+        #          extent=[chi_array[0]*1.5-chi_array[1]*0.5, \
+        #                  chi_array[-1]*1.5-chi_array[-2]*0.5, \
+        #                  tth_array[0]*1.5-tth_array[1]*0.5, \
+        #                  tth_array[-1]*1.5-tth_array[-2]*0.5])
+        #fig.colorbar(img)
+
     # average over all orientations
     intensities = np.array(intensities)
     intensities = np.mean(intensities, axis=0)
