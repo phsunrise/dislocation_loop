@@ -1,12 +1,11 @@
 import numpy as np
 import sys, os
-from info import MAXTIER 
-from settings import basedir
+from settings import basedir, MAXTIER
 import glob
 
 sample = 'W'
 looptypes = ['int', 'vac']
-from W_parameters import *
+from W_parameters import R, orientations 
 i_dir = 0
 while os.path.isdir(basedir + "%s_R%d_amp2d_%d/"%(sample, R, i_dir)):
     print "folder %s exists, containing %d files" % (\

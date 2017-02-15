@@ -4,6 +4,8 @@ from settings import basedir
 from getopt import getopt
 import glob
 import pickle
+from dampingfunc import dampingfunc
+from ampint import ampint
 
 do_debug = False
 do_mpi = True # when -n and -p commands are supplied, will do "fake mpi"
@@ -25,8 +27,7 @@ if do_mpi:
     nprocs = comm.Get_size()
 
 sample = 'W'
-from W_parameters import R 
-looptypes = ['vac', 'int']
+from W_parameters import R
 
 print "sample:", sample
 
@@ -41,19 +42,27 @@ if do_debug:
     val = raw_input("enter folder number: ")
     i_dir = int(val)
     datadir = basedir+"%s_R%d_amp2d_%d/"%(sample, R, i_dir)
+
+    del sys.modules["W_parameters"]
+    sys.path.insert(0, datadir)
+    from W_parameters import orientations 
+    looptypes = ['vac', 'int']
     _list = [(looptype, i_ori, ori) for looptype in looptypes \
                             for i_ori, ori in enumerate(orientations)]
     _list.append(datadir)
     with open("core_2d_filelist.pickle", 'wb') as fout:
         pickle.dump(_list, fout)
+    sys.exit(0)
+
 else:
     _list = pickle.load(open("core_2d_filelist.pickle", 'rb'))
     datadir = _list[-1]
     _list = _list[:-1]
 
-sys.path.insert(0, datadir)
-from W_parameters import * 
-print "R=%.1f, D=%.1f*R"%(R, D/R)
+    del sys.modules["W_parameters"]
+    sys.path.insert(0, datadir)
+    from W_parameters import R, funcform, funcparams, rot, a0, a1, ex_p, ey_p, C12, C44, Vc, B 
+
 
 _file = np.load(datadir+"qarray_2d.npz")
 q_array = _file['q_array'] 
@@ -68,7 +77,8 @@ for _i_list, (looptype, i_ori, ori) in enumerate(_list):
     #if not (i_ori==2 and looptype=='int'):
     #    continue
     print "starting orientation %d..." % i_ori
-    amplitudes = np.zeros((q_array.shape[0], q_array.shape[1]))
+    amplitudes = np.zeros((q_array.shape[0], q_array.shape[1])).astype(complex)
+    amplitude_ints = np.zeros((q_array.shape[0], q_array.shape[1])).astype(complex)
     counter = 0
     for index, _ in np.ndenumerate(amplitudes):
         q = q_array[index]
@@ -86,17 +96,22 @@ for _i_list, (looptype, i_ori, ori) in enumerate(_list):
                 r = x_p*ex_p+y_p*ey_p
                 if np.linalg.norm(r) <= R:
                     if looptype == 'int':
-                        amplitude += np.exp(\
-                            -0.5*r.dot(r)/D**2)*np.cos(Kloop.dot(r))
+                        amplitude += np.exp(1.j*Kloop.dot(r))\
+                                    *dampingfunc(r, R, funcform, funcparams)
                     elif looptype == 'vac':
-                        amplitude -= np.exp(\
-                            -0.5*r.dot(r)/D**2)*np.cos(Kloop.dot(r))
+                        amplitude -= np.exp(1.j*Kloop.dot(r))\
+                                    *dampingfunc(r, R, funcform, funcparams)
         amplitudes[index] = amplitude
+        ## add the integral to infinity
+        amplitude_ints[index] = ampint(q=q[0], K=K[0], b=B[0], R=R, r0=400., C12=C12, C44=C44, Vc=Vc)
         counter += 1
         if counter % 200 == 0:
             print "done %.2f%%\r" % (counter*100./np.prod(amplitudes.shape)),
             sys.stdout.flush()
 
     print "done 100.00%"
+    #print amplitudes
     np.save(datadir+"%s_atoms_core_2d_%s_R%d_ori%d.npy"%(\
                 sample, looptype, R, i_ori), amplitudes)
+    np.save(datadir+"%s_atoms_ampint_2d_%s_R%d_ori%d.npy"%(\
+                sample, looptype, R, i_ori), amplitude_ints)

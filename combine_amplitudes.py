@@ -1,7 +1,6 @@
 import numpy as np
 import sys, os
-from info import MAXTIER 
-from settings import basedir
+from settings import basedir, MAXTIER
 
 sample = 'W'
 looptypes = ['int', 'vac']

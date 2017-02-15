@@ -1,15 +1,15 @@
 import numpy as np
 import sys, os
-from info import MAXTIER, NFILES 
-from settings import basedir
+from settings import basedir, MAXTIER, NFILES 
 import time
 from getopt import getopt
 import glob
 import pickle
+from dampingfunc import dampingfunc
 
 sample = 'W'
 if sample == 'W':
-    from W_parameters import *
+    from W_parameters import R, rot, funcform, funcparams, orientations
 
 do_debug = False
 do_mpi = True # when -n and -p commands are supplied, will do "fake mpi"
@@ -31,7 +31,7 @@ if do_mpi:
     nprocs = comm.Get_size()
 
 if do_debug:
-    ## create data folder
+    ## choose data folder
     i_dir = 0
     while os.path.isdir(basedir + "%s_R%d_amp2d_%d/"%(sample, R, i_dir)):
         print "folder %s exists, containing %d files" % (\
@@ -104,11 +104,11 @@ for i_i_file, [looptype, tier, i_ori, ori, i_file] in enumerate(filelist):
     ## read s data
     sdata = np.load(s_datadir+"%s_atoms_s_%s_T%d_R%d_%04d_combined.npy"%(sample, looptype, tier, R, i_file))
 
-    amplitudes = np.zeros((q_array.shape[0], q_array.shape[1])) 
+    amplitudes = np.zeros((q_array.shape[0], q_array.shape[1])).astype(complex) 
     #time0 = time.time()
     for index, _ in np.ndenumerate(amplitudes):
-        q = q_array[index]
-        qloop = np.einsum('ij,jk,k', ori, rot, q)
+        #q = q_array[index]
+        #qloop = np.einsum('ij,jk,k', ori, rot, q)
         K = K_array[index] 
         Kloop = np.einsum('ij,jk,k', ori, rot, K)
 
@@ -118,19 +118,18 @@ for i_i_file, [looptype, tier, i_ori, ori, i_file] in enumerate(filelist):
         r = sdata[:, 0:3]
         s = sdata[:, 3:6]
         r1 = r+s
-        qr = r.dot(qloop)
-        Ks = s.dot(Kloop)
-        #hs = s.dot(hloop)
-        _temp = (np.cos(qr)*(np.cos(Ks)-1.)-\
-            np.sin(qr)*np.sin(Ks))*np.exp(-0.5*np.sum(r1**2, axis=1)/D**2)
-        #_temp = (np.cos(qr)*(np.cos(hs)-1.)-\
-        #    np.sin(qr)*np.sin(hs))*np.exp(-0.5*np.sum(r1**2, axis=1)/D**2)
-        if tier == 1:
-            _temp = _temp*sdata[:, 6]
+        _temp = (np.exp(1.j*r1.dot(Kloop))-np.exp(1.j*r.dot(Kloop)))\
+                    *dampingfunc(r, R, funcform, funcparams)
+        #qr = r.dot(qloop)
+        #Ks = s.dot(Kloop)
+        ##hs = s.dot(hloop)
+        #_temp = (np.cos(qr)*(np.cos(Ks)-1.)-\
+        #    np.sin(qr)*np.sin(Ks))*dampingfunc(r1, R, funcform, funcparams)
 
         amplitudes[index] = np.sum(_temp)
 
-        #print "done q=%.2f, used time %f" % (qval, time.time()-time0)
+        #print "done q=[%.2f, %.2f, %.2f], used time %f" % (
+        #            q[0], q[1], q[2], time.time()-time0)
         #time0=time.time()
 
     # save data

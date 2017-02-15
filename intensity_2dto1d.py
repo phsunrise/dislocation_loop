@@ -6,7 +6,9 @@ from mpl_toolkits.mplot3d import Axes3D
 from settings import plot_dir
 from W_parameters import a0
 
-R_ind_list = [(20., 2, 'r'), (40., 2, 'g'), (60., 0, 'b'), (80., 0, 'm')]
+#R_ind_list = [(20., 2, 'r'), (40., 2, 'g'), (60., 0, 'b'), (80., 0, 'm')]
+R_ind_list = [(20., 2, 'r'), (40., 2, 'g'), (60., 0, 'b'), (80., 0, 'm'), \
+              (20., 3, 'c'), (60., 1, 'k')]
 
 fig = plt.figure(figsize=(12, 6))
 ax = fig.add_subplot(111)

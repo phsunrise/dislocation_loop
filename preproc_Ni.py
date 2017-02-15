@@ -16,7 +16,12 @@ size = 2**7 # a multiple of 2
 
 sample = 'W' 
 looptype = 'vac'
-from W_parameters import *
+if sample == 'Al':
+    from Al_parameters import *
+elif sample == 'Cu':
+    from Cu_parameters import *
+elif sample == 'W':
+    from W_parameters import *
 
 ## first check if the preproc folder exists
 if not os.path.isdir(preproc_dir):

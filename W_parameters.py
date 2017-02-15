@@ -3,9 +3,16 @@ import numpy as np
 crystaltype = 'BCC'
 
 a0 = 3.160 # Angstrom
+if crystaltype == 'BCC':
+    Vc = a0**3/2. # atomic volume
+elif crystaltype == 'FCC':
+    Vc = a0**3/4.
 R = 20. 
-D = 4.*R
-Vc = 15.78
+
+#funcform = "fermi"
+#funcparams = [10., 0.9]
+funcform = "nodamp"
+funcparams = []
 
 ex = np.array([-1.,1.,0.])
 ey = np.array([0.,0.,1.])
@@ -27,19 +34,20 @@ C12 = 2.0453
 C44 = 1.6072
 d = C11 - C12 - 2.*C44
 
-h = 2.*np.pi/a0 * np.array([2.,0.,0.])
-eq = np.array([1.,0.,0.])
-eq = eq / np.linalg.norm(eq)
+#h = 2.*np.pi/a0 * np.array([2.,0.,0.])
+#eq = np.array([1.,0.,0.])
+#eq = eq / np.linalg.norm(eq)
+#q_array = np.linspace(-1.0, 1.0, 201)
 
 ## four possibilities for loop orientations
 ## in order to accelerate the calculation, we rotate h and eq,
 ## but not ex, ey, ez, so that the s field results can still be used
 
-#orientations_pm = [np.diag([1.,1.,1.]),
-#                   np.diag([1.,-1.,-1.]),
-#                   np.diag([-1.,1.,-1.]),
-#                   np.diag([-1.,-1.,1.])]
-orientations_pm = [np.diag([1.,1.,1.])]
+orientations_pm = [np.diag([1.,1.,1.]),
+                   np.diag([1.,-1.,-1.]),
+                   np.diag([-1.,1.,-1.]),
+                   np.diag([-1.,-1.,1.])]
+#orientations_pm = [np.diag([1.,1.,1.])]
 orientations_perm = [np.diag([1.,1.,1.]),
                      np.array([[0.,1.,0.],[0.,0.,1.],[1.,0.,0.]]),
                      np.array([[0.,0.,1.],[1.,0.,0.],[0.,1.,0.]])]

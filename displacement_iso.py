@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import special
 import sys, os
-from W_parameters import a0, B, C12, C44
+from W_parameters import a0, Bloop, C12, C44
 
 def solang(x, y, z, R):
     ''' 
@@ -29,6 +29,11 @@ def solang(x, y, z, R):
         return -2.*z/Rmax*special.ellipk(k) + np.pi*gamma0
 
 def disp(b, x, y, z, R, C12, C44):
+    if z < 0.:
+        rev = True
+        x, y, z = -x, -y, -z
+    else:
+        rev = False
     nu = C12/2./(C12+C44)
 
     r = np.sqrt(x*x+y*y)
@@ -100,7 +105,10 @@ def disp(b, x, y, z, R, C12, C44):
     #print "term3 =", term3
     #print "term3*(8pi(1-nu)) =", term3*(8.*np.pi*(1.-nu))
     #print (term1+term2+term3)/a0
-    return term1-term2-term3
+    if rev:
+        return -term1+term2+term3
+    else:
+        return term1-term2-term3
     
 if __name__=='__main__':
    x, y, z, R = sys.argv[1:] 
@@ -108,4 +116,4 @@ if __name__=='__main__':
    y = float(y)*a0
    z = float(z)*a0
    R = float(R)*a0
-   print disp(B, x, y, z, R, C12, C44)
+   print disp(Bloop, x, y, z, R, C12, C44)
