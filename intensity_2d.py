@@ -75,7 +75,7 @@ for looptype in looptypes:
         #amplitudes += np.load(datadir+"%s_atoms_amplitude_2d_%s_T3_R%d_ori%d_combined.npy"%(\
         #                    sample, looptype, R, i_ori))*ff_tier3*2.
 
-        amplitudes = np.load(datadir+"%s_atoms_ampint_%s_R%d_ori%d.npy"%(\
+        amplitudes += np.load(datadir+"%s_atoms_ampint_2d_%s_R%d_ori%d.npy"%(\
                                 sample, looptype, R, i_ori)) 
 
         intensities.append((np.abs(amplitudes)**2).astype(float))
