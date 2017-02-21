@@ -74,8 +74,7 @@ for looptype in ["int", "vac"]:
         from scipy.interpolate import interp2d
         intfunc = interp2d(x_array, y_array, intensities, \
                            kind='cubic', bounds_error=True)
-        #for xx in [-0.01, -0.005, 0., 0.005, 0.01]:
-        for xx in [0.]:
+        for xx in [-0.01, -0.005, 0., 0.005, 0.01]:
             intensityslice = intfunc(xx, y_array).flatten()
             ax.plot((y_array-(y_array[0]+y_array[-1])/2.)*2.*np.pi/a0, \
                     np.abs(y_array-(y_array[0]+y_array[-1])/2.)**4\
@@ -85,6 +84,8 @@ for looptype in ["int", "vac"]:
         ax.set_title("%s"%(looptype))
         ax.set_xlabel(r"$q$ ($\AA^{-1}$)")
         ax.set_ylabel(r"$q^4 I$")
+        #ax.set_ylim(0., (70. if looptype=='int' else 60.))
+        #ax.set_ylim(0., 60.)
         ax.legend()
     elif mode == "diagonal":
         intensityslice = [intensities[i,i] for i in xrange(len(x_array))]

@@ -61,7 +61,7 @@ else:
 
     del sys.modules["W_parameters"]
     sys.path.insert(0, datadir)
-    from W_parameters import R, funcform, funcparams, rot, a0, a1, ex_p, ey_p, C12, C44, Vc, B 
+    from W_parameters import R, funcform, funcparams, rot, a0, a1, ex_p, ey_p, C12, C44, Bloop 
 
 
 _file = np.load(datadir+"qarray_2d.npz")
@@ -103,7 +103,14 @@ for _i_list, (looptype, i_ori, ori) in enumerate(_list):
                                     *dampingfunc(r, R, funcform, funcparams)
         amplitudes[index] = amplitude
         ## add the integral to infinity
-        amplitude_ints[index] = ampint(q=q[0], K=K[0], b=B[0], R=R, r0=400., C12=C12, C44=C44, Vc=Vc)
+        rcutoff = 400.
+        if looptype == 'int':
+            amplitude_ints[index] = ampint(qvec=qloop, Kvec=Kloop, \
+                    bvec=Bloop, R=R, r0=rcutoff, C12=C12, C44=C44, a0=a0)
+        else:
+            amplitude_ints[index] = -ampint(qvec=qloop, Kvec=Kloop, \
+                    bvec=Bloop, R=R, r0=rcutoff, C12=C12, C44=C44, a0=a0)
+
         counter += 1
         if counter % 200 == 0:
             print "done %.2f%%\r" % (counter*100./np.prod(amplitudes.shape)),
