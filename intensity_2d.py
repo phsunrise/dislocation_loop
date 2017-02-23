@@ -77,7 +77,6 @@ for looptype in looptypes:
                                 sample, looptype, R, i_ori)) 
 
         intensities.append((np.abs(amplitudes)**2).astype(float))
-        break
 
         ## plot individual orientations 
         #fig = plt.figure(figsize=(12,6))
