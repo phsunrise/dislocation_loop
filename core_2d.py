@@ -105,10 +105,10 @@ for _i_list, (looptype, i_ori, ori) in enumerate(_list):
         ## add the integral to infinity
         rcutoff = 400.
         if looptype == 'int':
-            amplitude_ints[index] = ampint(qvec=qloop, Kvec=Kloop, \
+            amplitude_ints[index] = -ampint(qvec=qloop, Kvec=Kloop, \
                     bvec=Bloop, R=R, r0=rcutoff, C12=C12, C44=C44, a0=a0)
         else:
-            amplitude_ints[index] = -ampint(qvec=qloop, Kvec=Kloop, \
+            amplitude_ints[index] = ampint(qvec=qloop, Kvec=Kloop, \
                     bvec=Bloop, R=R, r0=rcutoff, C12=C12, C44=C44, a0=a0)
 
         counter += 1

@@ -7,7 +7,7 @@ if crystaltype == 'BCC':
     Vc = a0**3/2. # atomic volume
 elif crystaltype == 'FCC':
     Vc = a0**3/4.
-R = 60. 
+R = 100. 
 
 #funcform = "fermi"
 #funcparams = [10., 0.9]

@@ -15,7 +15,7 @@ for rank in xrange(nprocs):
         f.write("#SBATCH --job-name=amp2d_%03d\n"%rank)
         f.write("#SBATCH --output=amp2d_%03d.out\n"%rank)
         f.write("#SBATCH --error=amp2d_%03d.err\n"%rank)
-        f.write("#SBATCH --time=6:00:00\n")
+        f.write("#SBATCH --time=2:00:00\n")
         f.write("#SBATCH --qos=normal\n")
         f.write("#SBATCH --partition=iric\n")
         f.write("#SBATCH --nodes=1\n")

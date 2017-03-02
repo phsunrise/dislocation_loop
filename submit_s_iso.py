@@ -3,7 +3,10 @@ import os
 nprocs = 16 
 
 ## first generate the filelist
-os.system("python s_iso.py -d")
+val = os.system("python s_iso.py -d")
+if not val == 0:
+    print "Aborting submission..."
+    sys.exit(1)
 
 for rank in xrange(nprocs):
     with open("s_%03d.sbatch"%rank, 'w') as f:
